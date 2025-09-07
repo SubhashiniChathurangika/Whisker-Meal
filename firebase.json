@@ -42,6 +42,10 @@
       {
         "source": "/about",
         "destination": "/about.html"
+      },
+      {
+        "source": "/chat",
+        "destination": "/chatbot.html"
       }
     ],
     "errorPages": {

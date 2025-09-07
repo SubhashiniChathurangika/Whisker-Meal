@@ -303,11 +303,86 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
 
     <script>
+        // Pet care Q&A database
+        const petQADatabase = {
+            // Feeding related questions
+            "how much should i feed my dog": "For adult dogs, feed 2-3 meals per day. Generally, 1/4 to 1/2 cup of food per 10 pounds of body weight per meal. Adjust based on your dog's activity level, age, and the food manufacturer's recommendations.",
+            "how often should i feed my cat": "Adult cats should be fed 2-3 times per day. Kittens under 6 months need 3-4 meals daily. Most cats do well with 1/4 to 1/2 cup of dry food per meal, depending on their size and activity level.",
+            "what time should i feed my pet": "Establish regular feeding times. For dogs: 7 AM and 6 PM works well for twice daily feeding. For cats: morning, midday, and evening. Consistency helps with digestion and creates a routine your pet will love.",
+            "my pet won't eat": "Try warming the food slightly, ensuring fresh water is available, and check if the food is expired. If your pet hasn't eaten for 24 hours or shows other symptoms, consult your veterinarian immediately.",
+            "can i give my dog human food": "Some human foods are safe like plain rice, chicken, carrots, and green beans. Never give chocolate, grapes, onions, garlic, or xylitol-containing products. When in doubt, stick to pet food designed for your animal's needs.",
+
+            // Health related questions
+            "when should i take my pet to the vet": "Annual checkups for healthy adult pets, twice yearly for seniors (7+ years). Immediately for emergency signs: difficulty breathing, severe vomiting/diarrhea, inability to urinate, collapse, or any sudden behavior changes.",
+            "what are signs my pet is sick": "Watch for changes in appetite, water consumption, energy levels, bathroom habits, or behavior. Other warning signs include vomiting, diarrhea, lethargy, excessive panting, or hiding. Trust your instincts - you know your pet best.",
+            "how do i know if my pet is overweight": "You should be able to feel your pet's ribs without pressing hard. From above, there should be a visible waist. From the side, the belly should tuck up. If unsure, ask your vet to assess your pet's body condition.",
+            "my pet is drinking a lot of water": "Increased thirst can indicate diabetes, kidney disease, or other health issues. Monitor for 24-48 hours and contact your vet if it continues, especially if accompanied by increased urination or other symptoms.",
+
+            // Training and behavior
+            "how do i train my pet to use the feeder": "Start by placing treats near the device. Feed manually next to the machine for several days. Let your pet explore the device when it's not feeding time. Most pets adapt within a week once they associate it with food.",
+            "my pet is eating too fast": "Use a slow-feed bowl, puzzle feeder, or spread food on a flat surface. You can also divide meals into smaller, more frequent portions. Fast eating can cause choking or digestive issues.",
+            "how to stop my dog from begging": "Never give food from your plate. Establish clear feeding times and stick to them. Teach the 'place' command during meal times. Consistency from all family members is key.",
+            "my cat won't use the litter box": "Ensure the box is clean, in a quiet location, and the right size. Try different litter types. Rule out medical issues with your vet. Sudden changes in litter box habits often indicate health problems.",
+
+            // WhiskerMeal specific
+            "how do i set up whiskermeal": "Go to the web, connect to WiFi, create your pet's profile, set feeding schedules, and add food to containers. The setup wizard will guide you through each step. Contact support if you need help.",
+            "how to clean whiskermeal": "Clean food and water bowls daily with warm soapy water. Wipe exterior weekly with damp cloth. Monthly, clean internal dispensing mechanism following manual instructions. Always unplug before cleaning.",
+            "whiskermeal not working": "Check WiFi connection, restart device by unplugging for 30 seconds, update the app, and ensure food isn't jammed. Contact support at support@whiskermeal.com if problems persist.",
+            "how accurate is health prediction": "Our AI analyzes eating patterns, timing, and frequency to detect early warning signs. While helpful for monitoring, always consult your veterinarian for proper diagnosis and treatment of health concerns.",
+
+            // General pet care
+            "how often should i bathe my pet": "Dogs: every 4-6 weeks or when dirty/smelly. Cats: rarely needed as they groom themselves. Over-bathing can remove natural oils and cause skin irritation.",
+            "what vaccines does my pet need": "Core vaccines for dogs: rabies, DHPP. For cats: rabies, FVRCP. Your vet will recommend additional vaccines based on lifestyle and local disease risks. Keep vaccinations current.",
+            "how much exercise does my pet need": "Dogs: 30 minutes to 2 hours daily depending on breed and age. Cats: 10-15 minutes of active play twice daily. Adjust based on your pet's energy level and health status.",
+            "my pet has bad breath": "Often indicates dental disease. Provide dental chews, brush teeth regularly, and schedule professional cleanings as recommended by your vet. Bad breath can also signal other health issues."
+        };
+
+        // Function to find best answer match
+        function findBestAnswer(userMessage) {
+            const message = userMessage.toLowerCase();
+            
+            // Direct keyword matching
+            for (const question in petQADatabase) {
+                if (message.includes(question.toLowerCase()) || 
+                    question.toLowerCase().includes(message) ||
+                    message.split(' ').some(word => question.toLowerCase().includes(word) && word.length > 3)) {
+                    return petQADatabase[question];
+                }
+            }
+            
+            // Keyword-based matching for specific topics
+            if (message.includes('feed') || message.includes('food') || message.includes('eat')) {
+                return "For feeding advice, I recommend regular meal times and appropriate portions based on your pet's size and age. Would you like specific guidance about how much or how often to feed your pet?";
+            }
+            
+            if (message.includes('sick') || message.includes('health') || message.includes('vet')) {
+                return "For health concerns, watch for changes in appetite, energy, or behavior. Contact your veterinarian if symptoms persist or worsen. Regular checkups help catch issues early.";
+            }
+            
+            if (message.includes('train') || message.includes('behavior')) {
+                return "Training requires patience and consistency. Use positive reinforcement and establish clear routines. What specific behavior would you like help with?";
+            }
+            
+            if (message.includes('whiskermeal') || message.includes('device') || message.includes('app')) {
+                return "For WhiskerMeal support, check your WiFi connection and app updates. Clean the device regularly and follow the setup guide. Contact support@whiskermeal.com for technical issues.";
+            }
+            
+            // Default responses
+            const defaultResponses = [
+                "I'd be happy to help with your pet care question! Could you provide more specific details about what you're experiencing?",
+                "That's an interesting question about pet care. For the most accurate advice, especially regarding health concerns, please consult with your veterinarian.",
+                "I'm here to help with general pet care advice. What specific aspect of your pet's care would you like guidance on?",
+                "Thanks for your question! While I can provide general guidance, always consult your vet for health-related concerns or specific medical advice."
+            ];
+            
+            return defaultResponses[Math.floor(Math.random() * defaultResponses.length)];
+        }
+
         $(document).ready(function() {
             $("#messageArea").on("submit", function(event) {
                 const date = new Date();
                 const hour = date.getHours();
-                const minute = date.getMinutes();
+                const minute = date.getMinutes().toString().padStart(2, '0');
                 const str_time = hour + ":" + minute;
                 var rawText = $("#text").val();
                 
@@ -319,6 +394,18 @@
                 // Auto scroll to bottom
                 $("#messageFormeight").scrollTop($("#messageFormeight")[0].scrollHeight);
                 
+                // Try to get response from local Q&A database first
+                setTimeout(function() {
+                    var botResponse = findBestAnswer(rawText);
+                    var botHtml = '<div class="d-flex justify-content-start mb-4"><div class="img_cont_msg"><img src="https://i.ibb.co/fSNP7Rz/icons8-chatgpt-512.png" class="rounded-circle user_img_msg"></div><div class="msg_cotainer">' + botResponse + '<span class="msg_time">' + str_time + '</span></div></div>';
+                    $("#messageFormeight").append($.parseHTML(botHtml));
+                    
+                    // Auto scroll to bottom
+                    $("#messageFormeight").scrollTop($("#messageFormeight")[0].scrollHeight);
+                }, 1000); // 1 second delay to simulate thinking
+                
+                // Optional: Also try server endpoint (uncomment if you have a backend)
+                /*
                 $.ajax({
                     data: {
                         msg: rawText,
@@ -332,14 +419,15 @@
                     // Auto scroll to bottom
                     $("#messageFormeight").scrollTop($("#messageFormeight")[0].scrollHeight);
                 }).fail(function() {
-                    // Fallback response if server is not available
-                    var fallbackResponse = "I'm sorry, I'm having trouble connecting right now. Please try again later.";
-                    var botHtml = '<div class="d-flex justify-content-start mb-4"><div class="img_cont_msg"><img src="https://i.ibb.co/fSNP7Rz/icons8-chatgpt-512.png" class="rounded-circle user_img_msg"></div><div class="msg_cotainer">' + fallbackResponse + '<span class="msg_time">' + str_time + '</span></div></div>';
+                    // Fallback to local Q&A if server fails
+                    var botResponse = findBestAnswer(rawText);
+                    var botHtml = '<div class="d-flex justify-content-start mb-4"><div class="img_cont_msg"><img src="https://i.ibb.co/fSNP7Rz/icons8-chatgpt-512.png" class="rounded-circle user_img_msg"></div><div class="msg_cotainer">' + botResponse + '<span class="msg_time">' + str_time + '</span></div></div>';
                     $("#messageFormeight").append($.parseHTML(botHtml));
                     
                     // Auto scroll to bottom
                     $("#messageFormeight").scrollTop($("#messageFormeight")[0].scrollHeight);
                 });
+                */
                 
                 event.preventDefault();
             });

@@ -1,0 +1,786 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WhiskerMeal - Disease Prediction</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: white;
+            font-family: Arial, sans-serif;
+            color: #341536;
+        }
+
+        /* Navigation */
+        .navbar {
+            background-color: #341536;
+            padding: 10px 0;
+        }
+
+        .navbar-brand {
+            color: white !important;
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .back-btn {
+            color: white;
+            text-decoration: none;
+            font-size: 18px;
+            margin-right: 20px;
+        }
+
+        .back-btn:hover {
+            color: #ADEBB3;
+            text-decoration: none;
+        }
+
+        /* Main Container */
+        .prediction-container {
+            max-width: 1000px;
+            margin: 30px auto;
+            padding: 20px;
+        }
+
+        .page-header {
+            background-color: #341536;
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .card {
+            background: white;
+            border: 2px solid #ADEBB3;
+            border-radius: 10px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 3px 10px rgba(52, 21, 54, 0.1);
+        }
+
+        .card-header {
+            background-color: #341536;
+            color: white;
+            padding: 15px;
+            margin: -25px -25px 25px -25px;
+            border-radius: 8px 8px 0 0;
+            font-size: 18px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* Pet Information */
+        .pet-info-section {
+            background-color: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 25px;
+            border: 2px solid #ADEBB3;
+        }
+
+        /* Form Styling */
+        .form-label {
+            color: #341536;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .form-control, .form-select {
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            padding: 12px 15px;
+            font-size: 16px;
+            margin-bottom: 15px;
+        }
+
+        .form-control:focus, .form-select:focus {
+            border-color: #ADEBB3;
+            box-shadow: 0 0 0 0.2rem rgba(173, 235, 179, 0.25);
+        }
+
+        /* Symptoms Grid */
+        .symptoms-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .symptom-item {
+            background-color: #f8f9fa;
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            padding: 15px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .symptom-item:hover {
+            border-color: #ADEBB3;
+            background-color: rgba(173, 235, 179, 0.1);
+        }
+
+        .symptom-item.selected {
+            border-color: #341536;
+            background-color: rgba(52, 21, 54, 0.1);
+        }
+
+        .symptom-radio {
+            margin-right: 12px;
+            transform: scale(1.3);
+        }
+
+        .symptom-label {
+            font-weight: 500;
+            color: #341536;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .symptom-icon {
+            color: #341536;
+            font-size: 20px;
+            width: 25px;
+        }
+
+        /* Buttons */
+        .btn-primary {
+            background-color: #341536;
+            border-color: #341536;
+            color: white;
+            padding: 12px 30px;
+            border-radius: 25px;
+            font-weight: bold;
+            font-size: 18px;
+        }
+
+        .btn-primary:hover {
+            background-color: #4a1f3f;
+            border-color: #4a1f3f;
+        }
+
+        .btn-secondary {
+            background-color: #ADEBB3;
+            border-color: #ADEBB3;
+            color: #341536;
+            padding: 12px 25px;
+            border-radius: 25px;
+            font-weight: bold;
+        }
+
+        .btn-secondary:hover {
+            background-color: #8cc49c;
+            border-color: #8cc49c;
+            color: #341536;
+        }
+
+        /* Progress Bar */
+        .progress-container {
+            margin: 20px 0;
+        }
+
+        .progress-bar {
+            background-color: #ADEBB3;
+            height: 8px;
+            border-radius: 4px;
+        }
+
+        .progress-text {
+            text-align: center;
+            margin-top: 10px;
+            color: #341536;
+            font-weight: 600;
+        }
+
+        /* Prediction Results */
+        .prediction-result {
+            background: linear-gradient(135deg, #341536, #4a1f3f);
+            color: white;
+            border-radius: 15px;
+            padding: 25px;
+            margin-top: 20px;
+            text-align: center;
+            display: none;
+        }
+
+        .result-icon {
+            font-size: 60px;
+            margin-bottom: 15px;
+            color: #ADEBB3;
+        }
+
+        .disease-name {
+            font-size: 28px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .confidence-score {
+            font-size: 18px;
+            margin-bottom: 20px;
+            opacity: 0.9;
+        }
+
+        .recommendation {
+            background-color: rgba(173, 235, 179, 0.1);
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 20px;
+            text-align: left;
+        }
+
+        .recommendation h5 {
+            color: #ADEBB3;
+            margin-bottom: 15px;
+        }
+
+        /* Loading Animation */
+        .loading-spinner {
+            display: none;
+            text-align: center;
+            padding: 30px;
+        }
+
+        .spinner-border {
+            width: 3rem;
+            height: 3rem;
+            border-color: #ADEBB3;
+            border-right-color: transparent;
+        }
+
+        /* Warning Message */
+        .warning-message {
+            background-color: #fff3cd;
+            color: #856404;
+            border: 2px solid #ffeaa7;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .prediction-container {
+                padding: 10px;
+                margin: 15px auto;
+            }
+            
+            .symptoms-grid {
+                grid-template-columns: 1fr;
+                gap: 10px;
+            }
+            
+            .symptom-item {
+                padding: 12px;
+            }
+            
+            .page-header {
+                padding: 15px;
+            }
+            
+            .disease-name {
+                font-size: 22px;
+            }
+            
+            .result-icon {
+                font-size: 45px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container-fluid">
+            <div class="d-flex align-items-center">
+                <a href="homepage.html" class="back-btn">
+                    <i class="fas fa-arrow-left"></i> Back to Dashboard
+                </a>
+                <a class="navbar-brand">🏥 WhiskerMeal - Disease Prediction</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Container -->
+    <div class="prediction-container">
+        <!-- Page Header -->
+        <div class="page-header">
+            <h1>AI-Powered Disease Prediction</h1>
+            <p>Help us analyze your pet's symptoms for early disease detection</p>
+        </div>
+
+        <!-- Warning Message -->
+        <div class="warning-message">
+            <i class="fas fa-exclamation-triangle"></i>
+            <strong>Important:</strong> This AI prediction tool is for informational purposes only. Always consult with a qualified veterinarian for proper diagnosis and treatment.
+        </div>
+
+        <!-- Pet Information -->
+        <div class="pet-info-section">
+            <h5 style="color: #341536; margin-bottom: 15px;">
+                <i class="fas fa-paw"></i> Pet Information
+            </h5>
+            <div class="row">
+                <div class="col-md-4">
+                    <label for="petType" class="form-label">Pet Type</label>
+                    <select class="form-select" id="petType" required>
+                        <option value="">Select Pet Type</option>
+                        <option value="Dog">Dog</option>
+                        <option value="Cat">Cat</option>
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <label for="petAge" class="form-label">Age (years)</label>
+                    <input type="number" class="form-control" id="petAge" min="0" max="25" step="0.1" required>
+                </div>
+                <div class="col-md-4">
+                    <label for="petWeight" class="form-label">Weight (kg)</label>
+                    <input type="number" class="form-control" id="petWeight" min="0.1" max="100" step="0.1" required>
+                </div>
+            </div>
+        </div>
+
+        <!-- Symptoms Selection -->
+        <div class="card">
+            <div class="card-header">
+                <i class="fas fa-stethoscope"></i>
+                Symptom Assessment
+            </div>
+
+            <!-- Progress -->
+            <div class="progress-container">
+                <div class="progress">
+                    <div class="progress-bar" role="progressbar" style="width: 0%" id="progressBar"></div>
+                </div>
+                <div class="progress-text" id="progressText">Select symptoms to continue (0/17)</div>
+            </div>
+
+            <h5 style="color: #341536; margin-bottom: 20px;">
+                <i class="fas fa-list-check"></i> Select Observed Symptoms
+            </h5>
+
+            <form id="symptomForm">
+                <div class="symptoms-grid">
+                    <div class="symptom-item" onclick="toggleSymptom('fever')">
+                        <label class="symptom-label">
+                            <input type="radio" class="symptom-radio" name="symptom1" value="fever" id="fever">
+                            <i class="fas fa-thermometer-high symptom-icon"></i>
+                            <div>
+                                <strong>Fever</strong>
+                                <small class="d-block text-muted">Elevated body temperature</small>
+                            </div>
+                        </label>
+                    </div>
+
+                    <div class="symptom-item" onclick="toggleSymptom('loss_appetite')">
+                        <label class="symptom-label">
+                            <input type="radio" class="symptom-radio" name="symptom2" value="loss_appetite" id="loss_appetite">
+                            <i class="fas fa-utensils symptom-icon"></i>
+                            <div>
+                                <strong>Loss of Appetite</strong>
+                                <small class="d-block text-muted">Reduced interest in food</small>
+                            </div>
+                        </label>
+                    </div>
+
+                    <div class="symptom-item" onclick="toggleSymptom('lethargy')">
+                        <label class="symptom-label">
+                            <input type="radio" class="symptom-radio" name="symptom3" value="lethargy" id="lethargy">
+                            <i class="fas fa-bed symptom-icon"></i>
+                            <div>
+                                <strong>Lethargy</strong>
+                                <small class="d-block text-muted">Unusual tiredness or weakness</small>
+                            </div>
+                        </label>
+                    </div>
+
+                    <div class="symptom-item" onclick="toggleSymptom('vomiting')">
+                        <label class="symptom-label">
+                            <input type="radio" class="symptom-radio" name="symptom4" value="vomiting" id="vomiting">
+                            <i class="fas fa-dizzy symptom-icon"></i>
+                            <div>
+                                <strong>Vomiting</strong>
+                                <small class="d-block text-muted">Throwing up food or fluids</small>
+                            </div>
+                        </label>
+                    </div>
+
+                    <div class="symptom-item" onclick="toggleSymptom('diarrhea')">
+                        <label class="symptom-label">
+                            <input type="radio" class="symptom-radio" name="symptom5" value="diarrhea" id="diarrhea">
+                            <i class="fas fa-exclamation symptom-icon"></i>
+                            <div>
+                                <strong>Diarrhea</strong>
+                                <small class="d-block text-muted">Loose or watery stools</small>
+                            </div>
+                        </label>
+                    </div>
+
+                    <div class="symptom-item" onclick="toggleSymptom('coughing')">
+                        <label class="symptom-label">
+                            <input type="radio" class="symptom-radio" name="symptom6" value="coughing" id="coughing">
+                            <i class="fas fa-lungs symptom-icon"></i>
+                            <div>
+                                <strong>Coughing</strong>
+                                <small class="d-block text-muted">Persistent cough or breathing issues</small>
+                            </div>
+                        </label>
+                    </div>
+
+                    <div class="symptom-item" onclick="toggleSymptom('difficulty_breathing')">
+                        <label class="symptom-label">
+                            <input type="radio" class="symptom-radio" name="symptom7" value="difficulty_breathing" id="difficulty_breathing">
+                            <i class="fas fa-wind symptom-icon"></i>
+                            <div>
+                                <strong>Difficulty Breathing</strong>
+                                <small class="d-block text-muted">Labored or rapid breathing</small>
+                            </div>
+                        </label>
+                    </div>
+
+                    <div class="symptom-item" onclick="toggleSymptom('weight_loss')">
+                        <label class="symptom-label">
+                            <input type="radio" class="symptom-radio" name="symptom8" value="weight_loss" id="weight_loss">
+                            <i class="fas fa-weight symptom-icon"></i>
+                            <div>
+                                <strong>Weight Loss</strong>
+                                <small class="d-block text-muted">Unexplained weight reduction</small>
+                            </div>
+                        </label>
+                    </div>
+
+                    <div class="symptom-item" onclick="toggleSymptom('excessive_thirst')">
+                        <label class="symptom-label">
+                            <input type="radio" class="symptom-radio" name="symptom9" value="excessive_thirst" id="excessive_thirst">
+                            <i class="fas fa-tint symptom-icon"></i>
+                            <div>
+                                <strong>Excessive Thirst</strong>
+                                <small class="d-block text-muted">Drinking more water than usual</small>
+                            </div>
+                        </label>
+                    </div>
+
+                    <div class="symptom-item" onclick="toggleSymptom('lameness')">
+                        <label class="symptom-label">
+                            <input type="radio" class="symptom-radio" name="symptom10" value="lameness" id="lameness">
+                            <i class="fas fa-walking symptom-icon"></i>
+                            <div>
+                                <strong>Lameness</strong>
+                                <small class="d-block text-muted">Limping or difficulty walking</small>
+                            </div>
+                        </label>
+                    </div>
+
+                    <div class="symptom-item" onclick="toggleSymptom('skin_issues')">
+                        <label class="symptom-label">
+                            <input type="radio" class="symptom-radio" name="symptom11" value="skin_issues" id="skin_issues">
+                            <i class="fas fa-hand-paper symptom-icon"></i>
+                            <div>
+                                <strong>Skin Issues</strong>
+                                <small class="d-block text-muted">Rashes, itching, or hair loss</small>
+                            </div>
+                        </label>
+                    </div>
+
+                    <div class="symptom-item" onclick="toggleSymptom('eye_discharge')">
+                        <label class="symptom-label">
+                            <input type="radio" class="symptom-radio" name="symptom12" value="eye_discharge" id="eye_discharge">
+                            <i class="fas fa-eye symptom-icon"></i>
+                            <div>
+                                <strong>Eye Discharge</strong>
+                                <small class="d-block text-muted">Unusual eye secretions</small>
+                            </div>
+                        </label>
+                    </div>
+
+                    <div class="symptom-item" onclick="toggleSymptom('nasal_discharge')">
+                        <label class="symptom-label">
+                            <input type="radio" class="symptom-radio" name="symptom13" value="nasal_discharge" id="nasal_discharge">
+                            <i class="fas fa-head-side-mask symptom-icon"></i>
+                            <div>
+                                <strong>Nasal Discharge</strong>
+                                <small class="d-block text-muted">Runny or blocked nose</small>
+                            </div>
+                        </label>
+                    </div>
+
+                    <div class="symptom-item" onclick="toggleSymptom('excessive_urination')">
+                        <label class="symptom-label">
+                            <input type="radio" class="symptom-radio" name="symptom14" value="excessive_urination" id="excessive_urination">
+                            <i class="fas fa-restroom symptom-icon"></i>
+                            <div>
+                                <strong>Excessive Urination</strong>
+                                <small class="d-block text-muted">Urinating more frequently</small>
+                            </div>
+                        </label>
+                    </div>
+
+                    <div class="symptom-item" onclick="toggleSymptom('seizures')">
+                        <label class="symptom-label">
+                            <input type="radio" class="symptom-radio" name="symptom15" value="seizures" id="seizures">
+                            <i class="fas fa-brain symptom-icon"></i>
+                            <div>
+                                <strong>Seizures</strong>
+                                <small class="d-block text-muted">Convulsions or abnormal movements</small>
+                            </div>
+                        </label>
+                    </div>
+
+                    <div class="symptom-item" onclick="toggleSymptom('behavioral_changes')">
+                        <label class="symptom-label">
+                            <input type="radio" class="symptom-radio" name="symptom16" value="behavioral_changes" id="behavioral_changes">
+                            <i class="fas fa-user-friends symptom-icon"></i>
+                            <div>
+                                <strong>Behavioral Changes</strong>
+                                <small class="d-block text-muted">Unusual behavior or aggression</small>
+                            </div>
+                        </label>
+                    </div>
+
+                    <div class="symptom-item" onclick="toggleSymptom('pale_gums')">
+                        <label class="symptom-label">
+                            <input type="radio" class="symptom-radio" name="symptom17" value="pale_gums" id="pale_gums">
+                            <i class="fas fa-smile symptom-icon"></i>
+                            <div>
+                                <strong>Pale Gums</strong>
+                                <small class="d-block text-muted">Gums appear white or pale</small>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="text-center mt-4">
+                    <button type="button" class="btn btn-secondary me-3" onclick="clearSymptoms()">
+                        <i class="fas fa-undo"></i> Clear All
+                    </button>
+                    <button type="button" class="btn btn-primary" onclick="analyzeSymptoms()" id="analyzeBtn">
+                        <i class="fas fa-search"></i> Analyze Symptoms
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Loading Spinner -->
+        <div class="loading-spinner" id="loadingSpinner">
+            <div class="spinner-border" role="status">
+                <span class="visually-hidden">Analyzing...</span>
+            </div>
+            <h5 style="margin-top: 15px; color: #341536;">Analyzing symptoms...</h5>
+            <p style="color: #666;">Our AI is processing the data...</p>
+        </div>
+
+        <!-- Prediction Results -->
+        <div class="prediction-result" id="predictionResult">
+            <div class="result-icon">🏥</div>
+            <div class="disease-name" id="diseaseName">Analysis Complete</div>
+            <div class="confidence-score" id="confidenceScore">Confidence: 85%</div>
+            
+            <div class="recommendation">
+                <h5><i class="fas fa-user-md"></i> Recommendations</h5>
+                <div id="recommendations">
+                    <p><strong>Immediate Actions:</strong></p>
+                    <ul>
+                        <li>Schedule a veterinary appointment within 24-48 hours</li>
+                        <li>Monitor your pet's condition closely</li>
+                        <li>Keep your pet comfortable and hydrated</li>
+                        <li>Record any changes in symptoms</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="text-center mt-3">
+                <button class="btn btn-secondary" onclick="newAnalysis()">
+                    <i class="fas fa-plus"></i> New Analysis
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        let selectedSymptoms = [];
+
+        // Toggle Symptom Selection
+        function toggleSymptom(symptomId) {
+            const radio = document.getElementById(symptomId);
+            const symptomItem = radio.closest('.symptom-item');
+            
+            // Clear other selections in the same group
+            const radioName = radio.name;
+            document.querySelectorAll(`input[name="${radioName}"]`).forEach(r => {
+                r.closest('.symptom-item').classList.remove('selected');
+                const index = selectedSymptoms.indexOf(r.value);
+                if (index > -1) selectedSymptoms.splice(index, 1);
+            });
+            
+            // Select current symptom
+            radio.checked = true;
+            symptomItem.classList.add('selected');
+            selectedSymptoms.push(symptomId);
+            
+            updateProgress();
+        }
+
+        // Update Progress Bar
+        function updateProgress() {
+            const totalSymptoms = 17;
+            const selectedCount = selectedSymptoms.length;
+            const progressPercent = (selectedCount / totalSymptoms) * 100;
+            
+            document.getElementById('progressBar').style.width = progressPercent + '%';
+            document.getElementById('progressText').textContent = 
+                `Symptoms selected: ${selectedCount}/${totalSymptoms}`;
+        }
+
+        // Clear All Symptoms
+        function clearSymptoms() {
+            selectedSymptoms = [];
+            document.querySelectorAll('.symptom-radio').forEach(radio => {
+                radio.checked = false;
+            });
+            document.querySelectorAll('.symptom-item').forEach(item => {
+                item.classList.remove('selected');
+            });
+            updateProgress();
+            showNotification('All symptoms cleared', 'info');
+        }
+
+        // Analyze Symptoms
+        function analyzeSymptoms() {
+            const petType = document.getElementById('petType').value;
+            const petAge = document.getElementById('petAge').value;
+            const petWeight = document.getElementById('petWeight').value;
+
+            if (!petType || !petAge || !petWeight) {
+                showNotification('Please fill in all pet information', 'error');
+                return;
+            }
+
+            if (selectedSymptoms.length < 2) {
+                showNotification('Please select at least 2 symptoms for accurate analysis', 'error');
+                return;
+            }
+
+            // Show loading
+            document.getElementById('loadingSpinner').style.display = 'block';
+            document.getElementById('analyzeBtn').disabled = true;
+
+            // Simulate AI analysis (replace with actual API call)
+            setTimeout(() => {
+                const prediction = simulatePrediction();
+                showPredictionResult(prediction);
+                
+                document.getElementById('loadingSpinner').style.display = 'none';
+                document.getElementById('analyzeBtn').disabled = false;
+            }, 3000);
+        }
+
+        // Simulate Disease Prediction (replace with actual API)
+        function simulatePrediction() {
+            const diseases = [
+                { name: "Upper Respiratory Infection", confidence: 87, severity: "moderate" },
+                { name: "Gastroenteritis", confidence: 79, severity: "mild" },
+                { name: "Kennel Cough", confidence: 82, severity: "mild" },
+                { name: "Urinary Tract Infection", confidence: 75, severity: "moderate" },
+                { name: "Skin Allergies", confidence: 71, severity: "mild" }
+            ];
+            
+            return diseases[Math.floor(Math.random() * diseases.length)];
+        }
+
+        // Show Prediction Result
+        function showPredictionResult(prediction) {
+            document.getElementById('diseaseName').textContent = prediction.name;
+            document.getElementById('confidenceScore').textContent = 
+                `Confidence: ${prediction.confidence}%`;
+            
+            // Update recommendations based on severity
+            const recommendations = document.getElementById('recommendations');
+            if (prediction.severity === 'severe') {
+                recommendations.innerHTML = `
+                    <p><strong>Urgent Action Required:</strong></p>
+                    <ul>
+                        <li>Contact your veterinarian immediately</li>
+                        <li>Consider emergency vet visit if symptoms worsen</li>
+                        <li>Do not delay treatment</li>
+                        <li>Monitor breathing and vital signs closely</li>
+                    </ul>
+                `;
+            } else if (prediction.severity === 'moderate') {
+                recommendations.innerHTML = `
+                    <p><strong>Veterinary Consultation Recommended:</strong></p>
+                    <ul>
+                        <li>Schedule appointment within 24-48 hours</li>
+                        <li>Monitor symptoms closely</li>
+                        <li>Keep pet comfortable and hydrated</li>
+                        <li>Note any symptom changes</li>
+                    </ul>
+                `;
+            } else {
+                recommendations.innerHTML = `
+                    <p><strong>Monitoring Recommended:</strong></p>
+                    <ul>
+                        <li>Monitor symptoms for 24-48 hours</li>
+                        <li>Schedule routine vet visit if symptoms persist</li>
+                        <li>Ensure proper nutrition and hydration</li>
+                        <li>Contact vet if condition worsens</li>
+                    </ul>
+                `;
+            }
+            
+            document.getElementById('predictionResult').style.display = 'block';
+            document.getElementById('predictionResult').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // New Analysis
+        function newAnalysis() {
+            clearSymptoms();
+            document.getElementById('predictionResult').style.display = 'none';
+            document.getElementById('petType').value = '';
+            document.getElementById('petAge').value = '';
+            document.getElementById('petWeight').value = '';
+        }
+
+        // Notification System
+        function showNotification(message, type = 'info') {
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: ${type === 'success' ? '#28a745' : type === 'error' ? '#dc3545' : '#341536'};
+                color: white;
+                padding: 15px 20px;
+                border-radius: 8px;
+                z-index: 10000;
+                font-weight: bold;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+                max-width: 300px;
+            `;
+            notification.textContent = message;
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.remove();
+            }, 4000);
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            showNotification('Disease prediction system ready. Please select symptoms.', 'success');
+        });
+    </script>
+</body>
+</html>
