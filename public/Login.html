@@ -1,0 +1,680 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Whisker Meal - Login</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome for icons -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <!-- Custom CSS -->
+    <style>
+        :root {
+            --primary-color: #341536;
+            --secondary-color: #ADEBB3;
+            --background-color: white;
+            --text-dark: #341536;
+            --text-light: white;
+        }
+
+        body {
+            background: linear-gradient(135deg, var(--primary-color) 0%, #2a0e2b 50%, var(--primary-color) 100%);
+            min-height: 100vh;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* Background Animation */
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000"><defs><radialGradient id="a" cx="50%" cy="50%"><stop offset="0%" stop-color="%23ADEBB3" stop-opacity="0.1"/><stop offset="100%" stop-color="%23ADEBB3" stop-opacity="0"/></radialGradient></defs><circle cx="200" cy="200" r="100" fill="url(%23a)"><animate attributeName="r" values="100;150;100" dur="4s" repeatCount="indefinite"/></circle><circle cx="800" cy="300" r="80" fill="url(%23a)"><animate attributeName="r" values="80;120;80" dur="3s" repeatCount="indefinite"/></circle><circle cx="300" cy="700" r="120" fill="url(%23a)"><animate attributeName="r" values="120;180;120" dur="5s" repeatCount="indefinite"/></circle></svg>') center/cover;
+            animation: float 20s ease-in-out infinite;
+            pointer-events: none;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(180deg); }
+        }
+
+        /* Main Container */
+        .login-container {
+            position: relative;
+            z-index: 10;
+        }
+
+        .login-card {
+            background: rgba(255, 255, 255, 0.98);
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(52, 21, 54, 0.3);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(173, 235, 179, 0.3);
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .login-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 30px 80px rgba(52, 21, 54, 0.4);
+        }
+
+        /* Left Side - Branding */
+        .brand-side {
+            background: linear-gradient(135deg, var(--primary-color), #4a1f3f);
+            color: var(--text-light);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 3rem 2rem;
+            position: relative;
+        }
+
+        .brand-side::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="pawprint" patternUnits="userSpaceOnUse" width="20" height="20"><circle cx="10" cy="5" r="1.5" fill="%23ADEBB3" opacity="0.1"/><circle cx="5" cy="10" r="1" fill="%23ADEBB3" opacity="0.1"/><circle cx="15" cy="10" r="1" fill="%23ADEBB3" opacity="0.1"/><circle cx="7" cy="15" r="0.8" fill="%23ADEBB3" opacity="0.1"/><circle cx="13" cy="15" r="0.8" fill="%23ADEBB3" opacity="0.1"/></pattern></defs><rect width="100" height="100" fill="url(%23pawprint)"/></svg>');
+            opacity: 0.3;
+        }
+
+        .brand-logo {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            color: var(--secondary-color);
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        .brand-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: var(--secondary-color);
+        }
+
+        .brand-subtitle {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            margin-bottom: 2rem;
+            line-height: 1.6;
+        }
+
+        .feature-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .feature-list li {
+            margin: 0.8rem 0;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            font-size: 0.95rem;
+        }
+
+        .feature-icon {
+            color: var(--secondary-color);
+            font-size: 1.2rem;
+        }
+
+        /* Right Side - Login Form */
+        .form-side {
+            padding: 3rem 2.5rem;
+            background: var(--background-color);
+        }
+
+        .form-title {
+            color: var(--text-dark);
+            font-size: 2rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            text-align: center;
+        }
+
+        .form-subtitle {
+            color: #6c757d;
+            text-align: center;
+            margin-bottom: 2rem;
+            font-size: 1rem;
+        }
+
+        /* Custom Form Styling */
+        .form-floating {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-floating > .form-control {
+            border: 2px solid #e9ecef;
+            border-radius: 12px;
+            padding: 1rem 0.75rem;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background: #f8f9fa;
+        }
+
+        .form-floating > .form-control:focus {
+            border-color: var(--secondary-color);
+            box-shadow: 0 0 0 0.2rem rgba(173, 235, 179, 0.25);
+            background: white;
+            transform: translateY(-2px);
+        }
+
+        .form-floating > label {
+            color: #6c757d;
+            font-weight: 500;
+        }
+
+        .form-floating > .form-control:focus ~ label,
+        .form-floating > .form-control:not(:placeholder-shown) ~ label {
+            color: var(--primary-color);
+            transform: scale(0.85) translateY(-0.5rem) translateX(0.15rem);
+        }
+
+        /* Password Toggle */
+        .password-toggle {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: #6c757d;
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+            z-index: 5;
+        }
+
+        .password-toggle:hover {
+            color: var(--primary-color);
+            background: rgba(173, 235, 179, 0.1);
+        }
+
+        /* Custom Checkbox */
+        .form-check-input:checked {
+            background-color: var(--secondary-color);
+            border-color: var(--secondary-color);
+        }
+
+        .form-check-input:focus {
+            box-shadow: 0 0 0 0.25rem rgba(173, 235, 179, 0.25);
+        }
+
+        .form-check-label {
+            color: var(--text-dark);
+            font-weight: 500;
+        }
+
+        /* Login Button */
+        .btn-login {
+            background: linear-gradient(135deg, var(--primary-color), #4a1f3f);
+            border: none;
+            color: white;
+            font-weight: 600;
+            padding: 0.8rem 2rem;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            width: 100%;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-login::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: all 0.5s ease;
+        }
+
+        .btn-login:hover::before {
+            left: 100%;
+        }
+
+        .btn-login:hover {
+            background: linear-gradient(135deg, #4a1f3f, var(--primary-color));
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(52, 21, 54, 0.3);
+        }
+
+        .btn-login:active {
+            transform: translateY(0);
+        }
+
+        /* Social Login Buttons */
+        .btn-social {
+            border: 2px solid #e9ecef;
+            background: white;
+            color: #6c757d;
+            font-weight: 600;
+            padding: 0.7rem 1rem;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            width: 48%;
+        }
+
+        .btn-social:hover {
+            border-color: var(--secondary-color);
+            color: var(--primary-color);
+            background: rgba(173, 235, 179, 0.1);
+            transform: translateY(-2px);
+            text-decoration: none;
+        }
+
+        .btn-google:hover {
+            border-color: #db4437;
+            color: #db4437;
+        }
+
+        .btn-facebook:hover {
+            border-color: #4267B2;
+            color: #4267B2;
+        }
+
+        /* Links */
+        .custom-link {
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: 600;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .custom-link::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: -2px;
+            left: 50%;
+            background: var(--secondary-color);
+            transition: all 0.3s ease;
+        }
+
+        .custom-link:hover::after {
+            width: 100%;
+            left: 0;
+        }
+
+        .custom-link:hover {
+            color: var(--secondary-color);
+            text-decoration: none;
+        }
+
+        /* Alert Styles */
+        .alert {
+            border-radius: 12px;
+            border: none;
+            font-weight: 500;
+        }
+
+        .alert-danger {
+            background: rgba(220, 53, 69, 0.1);
+            color: #dc3545;
+            border-left: 4px solid #dc3545;
+        }
+
+        .alert-success {
+            background: rgba(173, 235, 179, 0.2);
+            color: var(--primary-color);
+            border-left: 4px solid var(--secondary-color);
+        }
+
+        /* Loading Animation */
+        .btn-loading {
+            position: relative;
+            color: transparent !important;
+        }
+
+        .btn-loading::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 20px;
+            height: 20px;
+            border: 2px solid #ffffff;
+            border-top: 2px solid transparent;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            transform: translate(-50%, -50%);
+        }
+
+        @keyframes spin {
+            0% { transform: translate(-50%, -50%) rotate(0deg); }
+            100% { transform: translate(-50%, -50%) rotate(360deg); }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .brand-side {
+                padding: 2rem 1rem;
+            }
+            
+            .form-side {
+                padding: 2rem 1.5rem;
+            }
+            
+            .brand-title {
+                font-size: 2rem;
+            }
+            
+            .brand-logo {
+                font-size: 3rem;
+            }
+            
+            .btn-social {
+                width: 100%;
+                margin-bottom: 0.5rem;
+            }
+        }
+
+        /* Custom Animations */
+        .slide-in {
+            animation: slideIn 0.6s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container-fluid login-container d-flex align-items-center justify-content-center min-vh-100 p-4">
+        <div class="row w-100 justify-content-center">
+            <div class="col-lg-10 col-xl-8">
+                <div class="login-card row g-0 slide-in">
+                    <!-- Left Side - Branding -->
+                    <div class="col-md-6 brand-side">
+                        <div class="brand-logo">🐾</div>
+                        <h1 class="brand-title">WhiskerMeal</h1>
+                        <p class="brand-subtitle">Smart Friend to Take Care of Your Pet!</p>
+                        
+                        
+                    </div>
+
+                    <!-- Right Side - Login Form -->
+                    <div class="col-md-6 form-side">
+                        <h2 class="form-title">Welcome Back!</h2>
+                        <p class="form-subtitle">Sign in to manage your pet's feeding routine</p>
+
+                        <!-- Alert Messages -->
+                        <div id="alertContainer"></div>
+
+                        <!-- Login Form -->
+                        <form id="loginForm" novalidate>
+                            <!-- Email Field -->
+                            <div class="form-floating">
+                                <input type="email" class="form-control" id="email" name="email" placeholder="name@example.com" required>
+                                <label for="email">Email Address</label>
+                                <div class="invalid-feedback">
+                                    Please enter a valid email address.
+                                </div>
+                            </div>
+
+                            <!-- Password Field -->
+                            <div class="form-floating position-relative">
+                                <input type="password" class="form-control" id="password" name="password" placeholder="Password" required minlength="6">
+                                <label for="password">Password</label>
+                                <button type="button" class="password-toggle" id="togglePassword">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                                <div class="invalid-feedback">
+                                    Password must be at least 6 characters long.
+                                </div>
+                            </div>
+
+                            <!-- Remember Me & Forgot Password -->
+                            <div class="d-flex justify-content-between align-items-center mb-4">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="rememberMe" name="rememberMe">
+                                    <label class="form-check-label" for="rememberMe">
+                                        Remember me
+                                    </label>
+                                </div>
+                                <a href="#" class="custom-link" id="forgotPassword">Forgot Password?</a>
+                            </div>
+
+                            <!-- Login Button -->
+                            <button type="submit" class="btn btn-login mb-4" id="loginBtn">
+                                <i class="fas fa-sign-in-alt me-2" hr></i>
+                                Sign In
+                            </button>
+                        </form>
+
+                        <!-- Divider -->
+                        <div class="text-center mb-4">
+                            <span class="text-muted">── or continue with ──</span>
+                        </div>
+
+                        <!-- Social Login -->
+                        <div class="d-flex gap-2 mb-4">
+                            <a href="#" class="btn-social btn-google" id="googleLogin">
+                                <i class="fab fa-google"></i>
+                                Google
+                            </a>
+                            <a href="#" class="btn-social btn-facebook" id="facebookLogin">
+                                <i class="fab fa-facebook-f"></i>
+                                Facebook
+                            </a>
+                        </div>
+
+                        <!-- Sign Up Link -->
+                        <div class="text-center">
+                            <span class="text-muted">Don't have an account? </span>
+                            <a href="/palayanna" class="custom-link" id="signUpLink">Create Account</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Custom JavaScript -->
+    <script>
+        // DOM Elements
+        const loginForm = document.getElementById('loginForm');
+        const loginBtn = document.getElementById('loginBtn');
+        const togglePassword = document.getElementById('togglePassword');
+        const passwordField = document.getElementById('password');
+        const alertContainer = document.getElementById('alertContainer');
+        
+        // Password Toggle Functionality
+        togglePassword.addEventListener('click', function() {
+            const type = passwordField.getAttribute('type') === 'password' ? 'text' : 'password';
+            passwordField.setAttribute('type', type);
+            
+            const icon = this.querySelector('i');
+            icon.classList.toggle('fa-eye');
+            icon.classList.toggle('fa-eye-slash');
+        });
+
+        // Show Alert Function
+        function showAlert(message, type = 'danger') {
+            const alertHTML = `
+                <div class="alert alert-${type} alert-dismissible fade show" role="alert">
+                    <i class="fas fa-${type === 'success' ? 'check-circle' : 'exclamation-triangle'} me-2"></i>
+                    ${message}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            `;
+            alertContainer.innerHTML = alertHTML;
+            
+            // Auto dismiss after 5 seconds
+            setTimeout(() => {
+                const alert = alertContainer.querySelector('.alert');
+                if (alert) {
+                    const bsAlert = new bootstrap.Alert(alert);
+                    bsAlert.close();
+                }
+            }, 5000);
+        }
+
+        // Form Validation
+        function validateForm() {
+            const email = document.getElementById('email');
+            const password = document.getElementById('password');
+            let isValid = true;
+
+            // Email validation
+            if (!email.value.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)) {
+                email.classList.add('is-invalid');
+                isValid = false;
+            } else {
+                email.classList.remove('is-invalid');
+                email.classList.add('is-valid');
+            }
+
+            // Password validation
+            if (password.value.length < 6) {
+                password.classList.add('is-invalid');
+                isValid = false;
+            } else {
+                password.classList.remove('is-invalid');
+                password.classList.add('is-valid');
+            }
+
+            return isValid;
+        }
+
+        // Login Form Submission
+        loginForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            if (!validateForm()) {
+                showAlert('Please fill in all fields correctly.', 'danger');
+                return;
+            }
+
+            // Show loading state
+            loginBtn.classList.add('btn-loading');
+            loginBtn.disabled = true;
+
+            // Get form data
+            const formData = new FormData(loginForm);
+            const loginData = {
+                email: formData.get('email'),
+                password: formData.get('password'),
+                rememberMe: formData.get('rememberMe') === 'on'
+            };
+
+            // Simulate API call (replace with your actual login logic)
+            setTimeout(() => {
+                // Demo credentials for testing
+                if (loginData.email === 'demo@whiskermeal.com' && loginData.password === 'demo123') {
+                    showAlert('Login successful! Redirecting to dashboard...', 'success');
+                    
+                    // Store login state
+                    if (loginData.rememberMe) {
+                        localStorage.setItem('whiskermeal_user', JSON.stringify({
+                            email: loginData.email,
+                            loginTime: new Date().toISOString()
+                        }));
+                    }
+                    
+                    // Redirect to dashboard after 2 seconds
+                    setTimeout(() => {
+                        // Replace with your dashboard URL
+                        window.location.href = '/homepage';
+                    }, 2000);
+                } else {
+                    showAlert('Invalid email or password. Try demo@whiskermeal.com / demo123', 'danger');
+                }
+                
+                // Remove loading state
+                loginBtn.classList.remove('btn-loading');
+                loginBtn.disabled = false;
+            }, 1500);
+        });
+
+        // Real-time validation
+        document.getElementById('email').addEventListener('blur', validateForm);
+        document.getElementById('password').addEventListener('blur', validateForm);
+
+        // Social Login Handlers
+        document.getElementById('googleLogin').addEventListener('click', function(e) {
+            e.preventDefault();
+            showAlert('Google login integration coming soon!', 'success');
+        });
+
+        document.getElementById('facebookLogin').addEventListener('click', function(e) {
+            e.preventDefault();
+            showAlert('Facebook login integration coming soon!', 'success');
+        });
+
+        // Forgot Password Handler
+        document.getElementById('forgotPassword').addEventListener('click', function(e) {
+            e.preventDefault();
+            const email = document.getElementById('email').value;
+            
+            if (email) {
+                showAlert(`Password reset link sent to ${email}`, 'success');
+            } else {
+                showAlert('Please enter your email address first.', 'danger');
+                document.getElementById('email').focus();
+            }
+        });
+
+        // Sign Up Link Handler
+        document.getElementById('signUpLink').addEventListener('click', function(e) {
+            e.preventDefault();
+            // Replace with your signup page URL
+            showAlert('Redirecting to sign up page...', 'success');
+            setTimeout(() => {
+                 window.location.href = '/signup';
+            }, 1000);
+        });
+
+        // Check for existing login
+        document.addEventListener('DOMContentLoaded', function() {
+            const savedUser = localStorage.getItem('whiskermeal_user');
+            if (savedUser) {
+                const user = JSON.parse(savedUser);
+                document.getElementById('email').value = user.email;
+                document.getElementById('rememberMe').checked = true;
+            }
+        });
+
+        // Auto-focus first input
+        document.getElementById('email').focus();
+    </script>
+</body>
+</html>

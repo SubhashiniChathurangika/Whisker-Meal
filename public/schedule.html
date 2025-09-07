@@ -1,0 +1,1003 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WhiskerMeal - Feeding Schedule</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: white;
+            font-family: Arial, sans-serif;
+            color: #341536;
+        }
+
+        /* Navigation */
+        .navbar {
+            background-color: #341536;
+            padding: 10px 0;
+        }
+
+        .navbar-brand {
+            color: white !important;
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .back-btn {
+            color: white;
+            text-decoration: none;
+            font-size: 18px;
+            margin-right: 20px;
+        }
+
+        .back-btn:hover {
+            color: #ADEBB3;
+            text-decoration: none;
+        }
+
+        /* Schedule Container */
+        .schedule-container {
+            max-width: 1200px;
+            margin: 30px auto;
+            padding: 20px;
+        }
+
+        .page-header {
+            background-color: #341536;
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .card {
+            background: white;
+            border: 2px solid #ADEBB3;
+            border-radius: 10px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 3px 10px rgba(52, 21, 54, 0.1);
+        }
+
+        .card-header {
+            background-color: #341536;
+            color: white;
+            padding: 15px;
+            margin: -25px -25px 25px -25px;
+            border-radius: 8px 8px 0 0;
+            font-size: 18px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* Form Styling */
+        .form-label {
+            color: #341536;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .form-control, .form-select {
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            padding: 12px 15px;
+            font-size: 16px;
+            margin-bottom: 15px;
+        }
+
+        .form-control:focus, .form-select:focus {
+            border-color: #ADEBB3;
+            box-shadow: 0 0 0 0.2rem rgba(173, 235, 179, 0.25);
+        }
+
+        /* Buttons */
+        .btn-primary {
+            background-color: #341536;
+            border-color: #341536;
+            color: white;
+            padding: 12px 25px;
+            border-radius: 25px;
+            font-weight: bold;
+        }
+
+        .btn-primary:hover {
+            background-color: #4a1f3f;
+            border-color: #4a1f3f;
+        }
+
+        .btn-success {
+            background-color: #ADEBB3;
+            border-color: #ADEBB3;
+            color: #341536;
+            padding: 12px 25px;
+            border-radius: 25px;
+            font-weight: bold;
+        }
+
+        .btn-success:hover {
+            background-color: #8cc49c;
+            border-color: #8cc49c;
+            color: #341536;
+        }
+
+        .btn-danger {
+            background-color: #dc3545;
+            border-color: #dc3545;
+            color: white;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-weight: bold;
+        }
+
+        .btn-danger:hover {
+            background-color: #c82333;
+            border-color: #c82333;
+        }
+
+        .btn-warning {
+            background-color: #ffc107;
+            border-color: #ffc107;
+            color: #212529;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-weight: bold;
+        }
+
+        .btn-warning:hover {
+            background-color: #e0a800;
+            border-color: #e0a800;
+        }
+
+        /* Schedule Items */
+        .schedule-item {
+            background-color: #f8f9fa;
+            border: 2px solid #ADEBB3;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 15px;
+            position: relative;
+        }
+
+        .schedule-active {
+            border-color: #28a745;
+            background-color: #f0fff4;
+        }
+
+        .schedule-inactive {
+            border-color: #6c757d;
+            background-color: #f8f9fa;
+            opacity: 0.7;
+        }
+
+        .schedule-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .schedule-time {
+            font-size: 20px;
+            font-weight: bold;
+            color: #341536;
+        }
+
+        .schedule-meal {
+            font-size: 16px;
+            color: #666;
+            margin: 5px 0;
+        }
+
+        .schedule-status {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            padding: 5px 12px;
+            border-radius: 15px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .status-active {
+            background-color: #28a745;
+            color: white;
+        }
+
+        .status-inactive {
+            background-color: #6c757d;
+            color: white;
+        }
+
+        .schedule-actions {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 15px;
+        }
+
+        .schedule-details {
+            margin: 10px 0;
+        }
+
+        .food-type-icon {
+            display: inline-block;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background-color: #ADEBB3;
+            color: #341536;
+            text-align: center;
+            line-height: 30px;
+            margin-right: 10px;
+            font-size: 14px;
+        }
+
+        /* Day Selector */
+        .day-selector {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin: 15px 0;
+        }
+
+        .day-btn {
+            padding: 8px 12px;
+            border: 2px solid #ADEBB3;
+            background-color: white;
+            color: #341536;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+        .day-btn.active {
+            background-color: #ADEBB3;
+            color: #341536;
+        }
+
+        .day-btn:hover {
+            background-color: #ADEBB3;
+            color: #341536;
+        }
+
+        /* Weekly View */
+        .weekly-view {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 10px;
+            margin: 20px 0;
+        }
+
+        .day-column {
+            text-align: center;
+        }
+
+        .day-header {
+            background-color: #341536;
+            color: white;
+            padding: 10px;
+            border-radius: 8px 8px 0 0;
+            font-weight: bold;
+        }
+
+        .day-schedule {
+            border: 2px solid #ADEBB3;
+            border-top: none;
+            border-radius: 0 0 8px 8px;
+            min-height: 200px;
+            padding: 10px;
+            background-color: white;
+        }
+
+        .mini-schedule-item {
+            background-color: #f8f9fa;
+            border: 1px solid #ADEBB3;
+            border-radius: 5px;
+            padding: 8px;
+            margin: 5px 0;
+            font-size: 12px;
+        }
+
+        /* Success Message */
+        .success-message {
+            background-color: #d1eddd;
+            color: #155724;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border: 1px solid #c3e6cb;
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: #6c757d;
+        }
+
+        .empty-state i {
+            font-size: 60px;
+            margin-bottom: 20px;
+            color: #ADEBB3;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .schedule-container {
+                padding: 10px;
+            }
+            
+            .card {
+                padding: 15px;
+            }
+            
+            .card-header {
+                margin: -15px -15px 15px -15px;
+                padding: 12px;
+            }
+            
+            .schedule-actions {
+                flex-direction: column;
+            }
+            
+            .weekly-view {
+                grid-template-columns: 1fr;
+            }
+            
+            .schedule-status {
+                position: static;
+                display: inline-block;
+                margin: 10px 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container-fluid">
+            <div class="d-flex align-items-center">
+                <a href="homepage.html" class="back-btn">
+                    <i class="fas fa-arrow-left"></i> Back to Dashboard
+                </a>
+                <a class="navbar-brand">🐾 WhiskerMeal - Feeding Schedule</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Schedule Container -->
+    <div class="schedule-container">
+        <!-- Page Header -->
+        <div class="page-header">
+            <h1>Pet Feeding Schedule</h1>
+            <p>Create and manage automated feeding times for your pet</p>
+        </div>
+
+        <!-- Success Message -->
+        <div id="successMessage" class="success-message" style="display: none;">
+            <i class="fas fa-check-circle"></i> Schedule updated successfully!
+        </div>
+
+        <div class="row">
+            <!-- Add New Schedule -->
+            <div class="col-lg-4">
+                <div class="card">
+                    <div class="card-header">
+                        <i class="fas fa-plus"></i>
+                        Add Feeding Time
+                    </div>
+
+                    <form id="scheduleForm">
+                        <div class="mb-3">
+                            <label for="mealName" class="form-label">Meal Name</label>
+                            <select class="form-select" id="mealName" required>
+                                <option value="">Select Meal</option>
+                                <option value="Breakfast">Breakfast</option>
+                                <option value="Lunch">Lunch</option>
+                                <option value="Dinner">Dinner</option>
+                                <option value="Snack">Snack</option>
+                                <option value="Late Night">Late Night</option>
+                                <option value="Custom">Custom</option>
+                            </select>
+                        </div>
+
+                        <div class="mb-3" id="customMealDiv" style="display: none;">
+                            <label for="customMealName" class="form-label">Custom Meal Name</label>
+                            <input type="text" class="form-control" id="customMealName" placeholder="e.g., Mid-morning Treat">
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="feedingTime" class="form-label">Feeding Time</label>
+                            <input type="time" class="form-control" id="feedingTime" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="foodType" class="form-label">Food Type</label>
+                            <select class="form-select" id="foodType" required>
+                                <option value="">Select Food Type</option>
+                                <option value="Dry Food">Dry Food</option>
+                                <option value="Wet Food">Wet Food</option>
+                                <option value="Mixed">Mixed (Dry + Wet)</option>
+                                <option value="Treats">Treats</option>
+                                <option value="Raw Food">Raw Food</option>
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="portion" class="form-label">Portion Size (grams)</label>
+                            <input type="number" class="form-control" id="portion" min="10" max="1000" step="5" required>
+                            <div class="form-text">Recommended: 100-200g for medium dogs</div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Active Days</label>
+                            <div class="day-selector">
+                                <button type="button" class="day-btn" data-day="Monday">Mon</button>
+                                <button type="button" class="day-btn" data-day="Tuesday">Tue</button>
+                                <button type="button" class="day-btn" data-day="Wednesday">Wed</button>
+                                <button type="button" class="day-btn" data-day="Thursday">Thu</button>
+                                <button type="button" class="day-btn" data-day="Friday">Fri</button>
+                                <button type="button" class="day-btn" data-day="Saturday">Sat</button>
+                                <button type="button" class="day-btn" data-day="Sunday">Sun</button>
+                            </div>
+                            <button type="button" class="btn btn-outline-secondary btn-sm" onclick="selectAllDays()">Select All</button>
+                            <button type="button" class="btn btn-outline-secondary btn-sm" onclick="clearAllDays()">Clear All</button>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="scheduleNotes" class="form-label">Notes (Optional)</label>
+                            <textarea class="form-control" id="scheduleNotes" rows="2" placeholder="Special instructions or notes"></textarea>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary w-100">
+                            <i class="fas fa-plus"></i> Add to Schedule
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Quick Actions -->
+                <div class="card">
+                    <div class="card-header">
+                        <i class="fas fa-zap"></i>
+                        Quick Actions
+                    </div>
+                    <div class="d-grid gap-2">
+                        <button class="btn btn-success" onclick="enableAllSchedules()">
+                            <i class="fas fa-play"></i> Enable All Schedules
+                        </button>
+                        <button class="btn btn-warning" onclick="pauseAllSchedules()">
+                            <i class="fas fa-pause"></i> Pause All Schedules
+                        </button>
+                        <button class="btn btn-primary" onclick="showWeeklyView()">
+                            <i class="fas fa-calendar-week"></i> Weekly View
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Current Schedule -->
+            <div class="col-lg-8">
+                <div class="card">
+                    <div class="card-header">
+                        <i class="fas fa-clock"></i>
+                        Current Feeding Schedule
+                        <span class="badge bg-light text-dark ms-2" id="scheduleCount">3</span>
+                    </div>
+
+                    <div id="scheduleList">
+                        <!-- Morning Schedule -->
+                        <div class="schedule-item schedule-active">
+                            <div class="schedule-status status-active">Active</div>
+                            <div class="schedule-header">
+                                <div>
+                                    <div class="schedule-time">
+                                        <span class="food-type-icon">🥘</span>
+                                        7:00 AM - Breakfast
+                                    </div>
+                                    <div class="schedule-meal">Dry Food • 150g</div>
+                                </div>
+                            </div>
+                            <div class="schedule-details">
+                                <p><strong>Days:</strong> Monday, Tuesday, Wednesday, Thursday, Friday, Saturday, Sunday</p>
+                                <p><strong>Last Fed:</strong> Today at 7:00 AM</p>
+                                <p><strong>Next:</strong> Tomorrow at 7:00 AM</p>
+                                <p><strong>Notes:</strong> Regular morning meal</p>
+                            </div>
+                            <div class="schedule-actions">
+                                <button class="btn btn-success btn-sm" onclick="feedNow(this)">
+                                    <i class="fas fa-utensils"></i> Feed Now
+                                </button>
+                                <button class="btn btn-warning btn-sm" onclick="editSchedule(this,123)" data-bs-toggle="modal" data-bs-target="#editSchedule">
+                                    <i class="fas fa-edit"></i> Edit
+                                </button>
+                                <button class="btn btn-outline-secondary btn-sm" onclick="toggleSchedule(this)">
+                                    <i class="fas fa-pause"></i> Disable
+                                </button>
+                                <button class="btn btn-danger btn-sm" onclick="deleteSchedule(this)">
+                                    <i class="fas fa-trash"></i> Delete
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Afternoon Schedule -->
+                        <div class="schedule-item schedule-active">
+                            <div class="schedule-status status-active">Active</div>
+                            <div class="schedule-header">
+                                <div>
+                                    <div class="schedule-time">
+                                        <span class="food-type-icon">🍖</span>
+                                        1:00 PM - Lunch
+                                    </div>
+                                    <div class="schedule-meal">Wet Food • 100g</div>
+                                </div>
+                            </div>
+                            <div class="schedule-details">
+                                <p><strong>Days:</strong> Monday, Wednesday, Friday, Sunday</p>
+                                <p><strong>Last Fed:</strong> Today at 1:00 PM</p>
+                                <p><strong>Next:</strong> Wednesday at 1:00 PM</p>
+                                <p><strong>Notes:</strong> Smaller portion for midday</p>
+                            </div>
+                            <div class="schedule-actions">
+                                <button class="btn btn-success btn-sm" onclick="feedNow(this)">
+                                    <i class="fas fa-utensils"></i> Feed Now
+                                </button>
+                                <button class="btn btn-warning btn-sm" onclick="editSchedule(this)">
+                                    <i class="fas fa-edit"></i> Edit
+                                </button>
+                                <button class="btn btn-outline-secondary btn-sm" onclick="toggleSchedule(this)">
+                                    <i class="fas fa-pause"></i> Disable
+                                </button>
+                                <button class="btn btn-danger btn-sm" onclick="deleteSchedule(this)">
+                                    <i class="fas fa-trash"></i> Delete
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Evening Schedule -->
+                        <div class="schedule-item schedule-inactive">
+                            <div class="schedule-status status-inactive">Paused</div>
+                            <div class="schedule-header">
+                                <div>
+                                    <div class="schedule-time">
+                                        <span class="food-type-icon">🥩</span>
+                                        6:00 PM - Dinner
+                                    </div>
+                                    <div class="schedule-meal">Mixed Food • 200g</div>
+                                </div>
+                            </div>
+                            <div class="schedule-details">
+                                <p><strong>Days:</strong> Daily</p>
+                                <p><strong>Last Fed:</strong> Yesterday at 6:00 PM</p>
+                                <p><strong>Next:</strong> Paused</p>
+                                <p><strong>Notes:</strong> Main evening meal - currently paused</p>
+                            </div>
+                            <div class="schedule-actions">
+                                <button class="btn btn-success btn-sm" onclick="feedNow(this)">
+                                    <i class="fas fa-utensils"></i> Feed Now
+                                </button>
+                                <button class="btn btn-warning btn-sm" onclick="editSchedule(this)">
+                                    <i class="fas fa-edit"></i> Edit
+                                </button>
+                                <button class="btn btn-outline-success btn-sm" onclick="toggleSchedule(this)">
+                                    <i class="fas fa-play"></i> Enable
+                                </button>
+                                <button class="btn btn-danger btn-sm" onclick="deleteSchedule(this)">
+                                    <i class="fas fa-trash"></i> Delete
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Empty State (hidden by default) -->
+                    <div id="emptyState" class="empty-state" style="display: none;">
+                        <i class="fas fa-calendar-plus"></i>
+                        <h4>No feeding schedule set</h4>
+                        <p>Add your first feeding time to get started with automated feeding.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Weekly View Modal (hidden by default) -->
+        <div id="weeklyViewCard" class="card" style="display: none;">
+            <div class="card-header">
+                <i class="fas fa-calendar-week"></i>
+                Weekly Feeding Schedule
+                <button type="button" class="btn btn-outline-light btn-sm float-end" onclick="hideWeeklyView()">
+                    <i class="fas fa-times"></i> Close
+                </button>
+            </div>
+            <div class="weekly-view" id="weeklyView">
+                <!-- Weekly schedule will be generated here -->
+            </div>
+        </div>
+    </div>
+<div class="modal fade" id="editSchedule" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Edit Schedule</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form>
+<input type="text" class="form-control" id="mealname" placeholder="e.g., Mid-morning Treat">
+        </form>
+          </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary">Save changes</button>
+      </div>
+    </div>
+  </div>
+</div>
+    <!-- Bootstrap JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        let scheduleData = [];
+
+        // Handle custom meal name
+        document.getElementById('mealName').addEventListener('change', function() {
+            const customDiv = document.getElementById('customMealDiv');
+            if (this.value === 'Custom') {
+                customDiv.style.display = 'block';
+                document.getElementById('customMealName').required = true;
+            } else {
+                customDiv.style.display = 'none';
+                document.getElementById('customMealName').required = false;
+            }
+        });
+
+        // Day selector functionality
+        document.querySelectorAll('.day-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                this.classList.toggle('active');
+            });
+        });
+
+        // Select/Clear all days
+        function selectAllDays() {
+            document.querySelectorAll('.day-btn').forEach(btn => {
+                btn.classList.add('active');
+            });
+        }
+
+        function clearAllDays() {
+            document.querySelectorAll('.day-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+        }
+
+        // Form submission
+        document.getElementById('scheduleForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const mealName = document.getElementById('mealName').value;
+            const customMealName = document.getElementById('customMealName').value;
+            const finalMealName = mealName === 'Custom' ? customMealName : mealName;
+            
+            const activeDays = Array.from(document.querySelectorAll('.day-btn.active')).map(btn => btn.dataset.day);
+            
+            if (activeDays.length === 0) {
+                showNotification('Please select at least one day.', 'error');
+                return;
+            }
+
+            const scheduleItem = {
+                meal: finalMealName,
+                time: document.getElementById('feedingTime').value,
+                foodType: document.getElementById('foodType').value,
+                portion: document.getElementById('portion').value,
+                days: activeDays,
+                notes: document.getElementById('scheduleNotes').value,
+                active: true
+            };
+
+            addScheduleToList(scheduleItem);
+            
+            // Reset form
+            this.reset();
+            document.getElementById('customMealDiv').style.display = 'none';
+            clearAllDays();
+            
+            // Show success message
+            document.getElementById('successMessage').style.display = 'block';
+            showNotification('Feeding schedule added successfully!', 'success');
+            
+            setTimeout(() => {
+                document.getElementById('successMessage').style.display = 'none';
+            }, 5000);
+        });
+
+        // Add schedule to list
+        function addScheduleToList(schedule) {
+            const scheduleList = document.getElementById('scheduleList');
+            const emptyState = document.getElementById('emptyState');
+            
+            emptyState.style.display = 'none';
+            
+            const foodIcon = getFoodIcon(schedule.foodType);
+            const timeFormatted = formatTime(schedule.time);
+            const daysText = schedule.days.length === 7 ? 'Daily' : schedule.days.join(', ');
+            
+            const scheduleHTML = `
+                <div class="schedule-item schedule-active">
+                    <div class="schedule-status status-active">Active</div>
+                    <div class="schedule-header">
+                        <div>
+                            <div class="schedule-time">
+                                <span class="food-type-icon">${foodIcon}</span>
+                                ${timeFormatted} - ${schedule.meal}
+                            </div>
+                            <div class="schedule-meal">${schedule.foodType} • ${schedule.portion}g</div>
+                        </div>
+                    </div>
+                    <div class="schedule-details">
+                        <p><strong>Days:</strong> ${daysText}</p>
+                        <p><strong>Last Fed:</strong> Not yet</p>
+                        <p><strong>Next:</strong> ${getNextFeeding(schedule.time, schedule.days)}</p>
+                        ${schedule.notes ? `<p><strong>Notes:</strong> ${schedule.notes}</p>` : ''}
+                    </div>
+                    <div class="schedule-actions">
+                        <button class="btn btn-success btn-sm" onclick="feedNow(this)">
+                            <i class="fas fa-utensils"></i> Feed Now
+                        </button>
+                        <button class="btn btn-warning btn-sm" onclick="editSchedule(this)">
+                            <i class="fas fa-edit"></i> Edit
+                        </button>
+                        <button class="btn btn-outline-secondary btn-sm" onclick="toggleSchedule(this)">
+                            <i class="fas fa-pause"></i> Disable
+                        </button>
+                        <button class="btn btn-danger btn-sm" onclick="deleteSchedule(this)">
+                            <i class="fas fa-trash"></i> Delete
+                        </button>
+                    </div>
+                </div>
+            `;
+            
+            scheduleList.insertAdjacentHTML('afterbegin', scheduleHTML);
+            updateScheduleCount();
+        }
+
+        // Get food icon
+        function getFoodIcon(foodType) {
+            const icons = {
+                'Dry Food': '🥘',
+                'Wet Food': '🍖',
+                'Mixed': '🍽️',
+                'Treats': '🦴',
+                'Raw Food': '🥩'
+            };
+            return icons[foodType] || '🍽️';
+        }
+
+        // Format time
+        function formatTime(timeString) {
+            const [hours, minutes] = timeString.split(':');
+            const hour = parseInt(hours);
+            const ampm = hour >= 12 ? 'PM' : 'AM';
+            const displayHour = hour % 12 || 12;
+            return `${displayHour}:${minutes} ${ampm}`;
+        }
+
+        // Get next feeding time
+        function getNextFeeding(time, days) {
+            const today = new Date().getDay();
+            const dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+            const currentDay = dayNames[today];
+            
+            if (days.includes(currentDay)) {
+                return `Today at ${formatTime(time)}`;
+            } else {
+                return `Next scheduled day at ${formatTime(time)}`;
+            }
+        }
+
+        // Feed now
+        function feedNow(button) {
+            const scheduleItem = button.closest('.schedule-item');
+            const mealName = scheduleItem.querySelector('.schedule-time').textContent.split(' - ')[1];
+            
+            button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Feeding...';
+            button.disabled = true;
+            
+            setTimeout(() => {
+                button.innerHTML = '<i class="fas fa-utensils"></i> Feed Now';
+                button.disabled = false;
+                showNotification(`${mealName} dispensed successfully!`, 'success');
+                
+                // Update last fed time
+                const lastFedElement = scheduleItem.querySelector('.schedule-details p:nth-child(2)');
+                lastFedElement.innerHTML = '<strong>Last Fed:</strong> Just now';
+            }, 2000);
+        }
+
+        // Toggle schedule
+        function toggleSchedule(button) {
+            const scheduleItem = button.closest('.schedule-item');
+            const isActive = scheduleItem.classList.contains('schedule-active');
+            
+            if (isActive) {
+                // Disable schedule
+                scheduleItem.classList.remove('schedule-active');
+                scheduleItem.classList.add('schedule-inactive');
+                scheduleItem.querySelector('.schedule-status').className = 'schedule-status status-inactive';
+                scheduleItem.querySelector('.schedule-status').textContent = 'Paused';
+                button.innerHTML = '<i class="fas fa-play"></i> Enable';
+                button.className = 'btn btn-outline-success btn-sm';
+                showNotification('Schedule paused', 'info');
+            } else {
+                // Enable schedule
+                scheduleItem.classList.remove('schedule-inactive');
+                scheduleItem.classList.add('schedule-active');
+                scheduleItem.querySelector('.schedule-status').className = 'schedule-status status-active';
+                scheduleItem.querySelector('.schedule-status').textContent = 'Active';
+                button.innerHTML = '<i class="fas fa-pause"></i> Disable';
+                button.className = 'btn btn-outline-secondary btn-sm';
+                showNotification('Schedule activated', 'success');
+            }
+        }
+
+        // Edit schedule
+        function editSchedule(button, scheduleId) {
+            const scheduleItem = button.closest('.schedule-item');
+            const mealName = scheduleItem.querySelector('.schedule-time').textContent.split(' - ')[1];
+            showNotification(`Edit functionality for "${mealName}" coming soon!`, 'info');
+document.getElementById('mealname').value = mealName;
+
+        }
+
+        // Delete schedule
+        function deleteSchedule(button) {
+            const scheduleItem = button.closest('.schedule-item');
+            const mealName = scheduleItem.querySelector('.schedule-time').textContent.split(' - ')[1];
+            
+            if (confirm(`Are you sure you want to delete "${mealName}" schedule?`)) {
+                scheduleItem.remove();
+                showNotification(`"${mealName}" schedule deleted successfully!`, 'success');
+                updateScheduleCount();
+                
+                // Show empty state if no schedules left
+                const remainingSchedules = document.querySelectorAll('.schedule-item').length;
+                if (remainingSchedules === 0) {
+                    document.getElementById('emptyState').style.display = 'block';
+                }
+            }
+        }
+
+        // Quick actions
+        function enableAllSchedules() {
+            document.querySelectorAll('.schedule-item').forEach(item => {
+                if (item.classList.contains('schedule-inactive')) {
+                    item.classList.remove('schedule-inactive');
+                    item.classList.add('schedule-active');
+                    item.querySelector('.schedule-status').className = 'schedule-status status-active';
+                    item.querySelector('.schedule-status').textContent = 'Active';
+                    
+                    const toggleBtn = item.querySelector('.schedule-actions .btn-outline-success');
+                    if (toggleBtn) {
+                        toggleBtn.innerHTML = '<i class="fas fa-pause"></i> Disable';
+                        toggleBtn.className = 'btn btn-outline-secondary btn-sm';
+                    }
+                }
+            });
+            showNotification('All schedules enabled!', 'success');
+        }
+
+        function pauseAllSchedules() {
+            document.querySelectorAll('.schedule-item').forEach(item => {
+                if (item.classList.contains('schedule-active')) {
+                    item.classList.remove('schedule-active');
+                    item.classList.add('schedule-inactive');
+                    item.querySelector('.schedule-status').className = 'schedule-status status-inactive';
+                    item.querySelector('.schedule-status').textContent = 'Paused';
+                    
+                    const toggleBtn = item.querySelector('.schedule-actions .btn-outline-secondary');
+                    if (toggleBtn) {
+                        toggleBtn.innerHTML = '<i class="fas fa-play"></i> Enable';
+                        toggleBtn.className = 'btn btn-outline-success btn-sm';
+                    }
+                }
+            });
+            showNotification('All schedules paused!', 'info');
+        }
+
+        // Show weekly view
+        function showWeeklyView() {
+            const weeklyCard = document.getElementById('weeklyViewCard');
+            const weeklyView = document.getElementById('weeklyView');
+            
+            // Generate weekly view
+            const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+            let weeklyHTML = '';
+            
+            days.forEach(day => {
+                weeklyHTML += `
+                    <div class="day-column">
+                        <div class="day-header">${day}</div>
+                        <div class="day-schedule" id="day-${day}">
+                            <!-- Schedules for this day will be added here -->
+                        </div>
+                    </div>
+                `;
+            });
+            
+            weeklyView.innerHTML = weeklyHTML;
+            
+            // Add sample schedules to each day
+            const sampleSchedules = [
+                { time: '07:00', meal: 'Breakfast', active: true },
+                { time: '13:00', meal: 'Lunch', active: true },
+                { time: '18:00', meal: 'Dinner', active: false }
+            ];
+            
+            days.forEach(day => {
+                const dayContainer = document.getElementById(`day-${day}`);
+                sampleSchedules.forEach(schedule => {
+                    const scheduleHTML = `
+                        <div class="mini-schedule-item" style="background-color: ${schedule.active ? '#f0fff4' : '#f8f9fa'}; border-color: ${schedule.active ? '#28a745' : '#6c757d'};">
+                            <div style="font-weight: bold;">${formatTime(schedule.time)}</div>
+                            <div>${schedule.meal}</div>
+                            <div style="font-size: 10px; color: #666;">${schedule.active ? 'Active' : 'Paused'}</div>
+                        </div>
+                    `;
+                    dayContainer.innerHTML += scheduleHTML;
+                });
+            });
+            
+            weeklyCard.style.display = 'block';
+            weeklyCard.scrollIntoView({ behavior: 'smooth' });
+            showNotification('Weekly view loaded!', 'info');
+        }
+
+        function hideWeeklyView() {
+            document.getElementById('weeklyViewCard').style.display = 'none';
+        }
+
+        // Update schedule count
+        function updateScheduleCount() {
+            const activeSchedules = document.querySelectorAll('.schedule-item').length;
+            document.getElementById('scheduleCount').textContent = activeSchedules;
+        }
+
+        // Notification system
+        function showNotification(message, type = 'info') {
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: ${type === 'success' ? '#28a745' : type === 'error' ? '#dc3545' : '#341536'};
+                color: white;
+                padding: 15px 20px;
+                border-radius: 8px;
+                z-index: 10000;
+                font-weight: bold;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+                max-width: 300px;
+            `;
+            notification.textContent = message;
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.remove();
+            }, 4000);
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            updateScheduleCount();
+            showNotification('Feeding schedule loaded successfully!', 'success');
+        });
+    </script>
+</body>
+</html>

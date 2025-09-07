@@ -1,0 +1,915 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WhiskerMeal - Community Chat</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: white;
+            font-family: Arial, sans-serif;
+            color: #341536;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* Navigation */
+        .navbar {
+            background-color: #341536;
+            padding: 10px 0;
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 1000;
+        }
+
+        .navbar-brand {
+            color: white !important;
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .back-btn {
+            color: white;
+            text-decoration: none;
+            font-size: 18px;
+            margin-right: 20px;
+        }
+
+        .back-btn:hover {
+            color: #ADEBB3;
+            text-decoration: none;
+        }
+
+        .online-count {
+            color: #ADEBB3;
+            font-size: 14px;
+            margin-left: auto;
+        }
+
+        /* Main Chat Container */
+        .chat-container {
+            display: flex;
+            height: 100vh;
+            margin-top: 60px;
+        }
+
+        /* Sidebar */
+        .chat-sidebar {
+            width: 300px;
+            background-color: #f8f9fa;
+            border-right: 2px solid #ADEBB3;
+            display: flex;
+            flex-direction: column;
+            height: calc(100vh - 60px);
+        }
+
+        .sidebar-header {
+            background-color: #341536;
+            color: white;
+            padding: 15px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* Room List */
+        .room-list {
+            flex: 1;
+            overflow-y: auto;
+            padding: 0;
+        }
+
+        .room-item {
+            padding: 15px;
+            border-bottom: 1px solid #e9ecef;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background-color: white;
+        }
+
+        .room-item:hover {
+            background-color: #ADEBB3;
+            color: #341536;
+        }
+
+        .room-item.active {
+            background-color: #341536;
+            color: white;
+        }
+
+        .room-name {
+            font-weight: bold;
+            font-size: 16px;
+        }
+
+        .room-description {
+            font-size: 12px;
+            opacity: 0.8;
+            margin-top: 3px;
+        }
+
+        .room-stats {
+            font-size: 11px;
+            margin-top: 5px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        /* Online Users */
+        .online-users {
+            border-top: 2px solid #ADEBB3;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        .online-users-header {
+            background-color: #ADEBB3;
+            color: #341536;
+            padding: 10px 15px;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        .user-item {
+            padding: 8px 15px;
+            border-bottom: 1px solid #e9ecef;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .user-status {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background-color: #28a745;
+        }
+
+        /* Main Chat Area */
+        .chat-main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            height: calc(100vh - 60px);
+        }
+
+        .chat-header {
+            background-color: #341536;
+            color: white;
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .chat-title {
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .chat-info {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        /* Messages Area */
+        .messages-container {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+            background-color: #f8f9fa;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .message {
+            display: flex;
+            gap: 10px;
+            align-items: flex-start;
+        }
+
+        .message.own {
+            flex-direction: row-reverse;
+        }
+
+        .message-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: #ADEBB3;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #341536;
+            font-weight: bold;
+            flex-shrink: 0;
+        }
+
+        .message.own .message-avatar {
+            background-color: #341536;
+            color: white;
+        }
+
+        .message-content {
+            max-width: 70%;
+            background-color: rgba(173, 235, 179, 0.8);
+            border: 2px solid #ADEBB3;
+            border-radius: 15px;
+            padding: 12px 15px;
+            position: relative;
+        }
+
+        .message.own .message-content {
+            background-color: rgba(52, 21, 54, 0.8);
+            color: white;
+            border-color: #341536;
+        }
+
+        .message-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 5px;
+        }
+
+        .message-author {
+            font-weight: bold;
+            font-size: 14px;
+            color: #341536;
+        }
+
+        .message.own .message-author {
+            color: #ADEBB3;
+        }
+
+        .message-time {
+            font-size: 11px;
+            opacity: 0.7;
+        }
+
+        .message-text {
+            margin: 0;
+            line-height: 1.4;
+        }
+
+        /* System Messages */
+        .system-message {
+            text-align: center;
+            color: #6c757d;
+            font-style: italic;
+            font-size: 14px;
+            margin: 10px 0;
+        }
+
+        /* Message Input */
+        .message-input-container {
+            background-color: white;
+            border-top: 2px solid #ADEBB3;
+            padding: 15px 20px;
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .message-input {
+            flex: 1;
+            border: 2px solid #e9ecef;
+            border-radius: 25px;
+            padding: 12px 20px;
+            font-size: 16px;
+            outline: none;
+        }
+
+        .message-input:focus {
+            border-color: #ADEBB3;
+            box-shadow: 0 0 0 0.2rem rgba(173, 235, 179, 0.25);
+        }
+
+        .send-btn {
+            background-color: #341536;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 18px;
+            transition: all 0.3s ease;
+        }
+
+        .send-btn:hover {
+            background-color: #4a1f3f;
+            transform: scale(1.05);
+        }
+
+        .send-btn:disabled {
+            background-color: #6c757d;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* Emoji Button */
+        .emoji-btn {
+            background-color: #ADEBB3;
+            color: #341536;
+            border: none;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .emoji-btn:hover {
+            background-color: #8cc49c;
+        }
+
+        /* Typing Indicator */
+        .typing-indicator {
+            display: none;
+            padding: 10px 20px;
+            font-style: italic;
+            color: #6c757d;
+            font-size: 14px;
+        }
+
+        .typing-dots {
+            display: inline-block;
+        }
+
+        .typing-dots::after {
+            content: '...';
+            animation: dots 1.5s steps(4, end) infinite;
+        }
+
+        @keyframes dots {
+            0%, 20% { content: '.'; }
+            40% { content: '..'; }
+            60%, 100% { content: '...'; }
+        }
+
+        /* Welcome Message */
+        .welcome-message {
+            text-align: center;
+            padding: 40px 20px;
+            color: #6c757d;
+        }
+
+        .welcome-message i {
+            font-size: 60px;
+            color: #ADEBB3;
+            margin-bottom: 20px;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .chat-sidebar {
+                position: fixed;
+                left: -300px;
+                z-index: 999;
+                transition: left 0.3s ease;
+            }
+            
+            .chat-sidebar.show {
+                left: 0;
+            }
+            
+            .chat-main {
+                width: 100%;
+            }
+            
+            .mobile-menu-btn {
+                color: white;
+                font-size: 20px;
+                cursor: pointer;
+                margin-right: 15px;
+            }
+            
+            .message-content {
+                max-width: 85%;
+            }
+        }
+
+        /* Scrollbar Styling */
+        .messages-container::-webkit-scrollbar,
+        .room-list::-webkit-scrollbar,
+        .online-users::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .messages-container::-webkit-scrollbar-track,
+        .room-list::-webkit-scrollbar-track,
+        .online-users::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+
+        .messages-container::-webkit-scrollbar-thumb,
+        .room-list::-webkit-scrollbar-thumb,
+        .online-users::-webkit-scrollbar-thumb {
+            background: #ADEBB3;
+            border-radius: 3px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container-fluid">
+            <div class="d-flex align-items-center">
+                <div class="mobile-menu-btn d-md-none" onclick="toggleSidebar()">
+                    <i class="fas fa-bars"></i>
+                </div>
+                <a href="homepage.html" class="back-btn d-none d-md-block">
+                    <i class="fas fa-arrow-left"></i> Back to Dashboard
+                </a>
+                <a class="navbar-brand">💬 WhiskerMeal Community</a>
+            </div>
+            <div class="online-count">
+                <i class="fas fa-circle" style="color: #28a745; font-size: 8px;"></i>
+                <span id="onlineCount">24</span> online
+            </div>
+        </div>
+    </nav>
+
+    <!-- Chat Container -->
+    <div class="chat-container">
+        <!-- Sidebar -->
+        <div class="chat-sidebar" id="chatSidebar">
+            <!-- Rooms Header -->
+            <div class="sidebar-header">
+                <i class="fas fa-comments"></i>
+                Chat Rooms
+            </div>
+
+            <!-- Room List -->
+            <div class="room-list">
+                <div class="room-item active" onclick="switchRoom(this, 'Golden Retrievers')">
+                    <div class="room-name">🐕 Golden Retrievers</div>
+                    <div class="room-description">For Golden Retriever owners</div>
+                    <div class="room-stats">
+                        <span>47 members</span>
+                        <span>12 online</span>
+                    </div>
+                </div>
+
+                <div class="room-item" onclick="switchRoom(this, 'Cat Lovers')">
+                    <div class="room-name">🐱 Cat Lovers</div>
+                    <div class="room-description">Everything about cats</div>
+                    <div class="room-stats">
+                        <span>89 members</span>
+                        <span>18 online</span>
+                    </div>
+                </div>
+
+                <div class="room-item" onclick="switchRoom(this, 'Small Dogs')">
+                    <div class="room-name">🐶 Small Dogs</div>
+                    <div class="room-description">Small breed discussions</div>
+                    <div class="room-stats">
+                        <span>32 members</span>
+                        <span>8 online</span>
+                    </div>
+                </div>
+
+                <div class="room-item" onclick="switchRoom(this, 'Pet Health')">
+                    <div class="room-name">🏥 Pet Health</div>
+                    <div class="room-description">Health tips and advice</div>
+                    <div class="room-stats">
+                        <span>156 members</span>
+                        <span>23 online</span>
+                    </div>
+                </div>
+
+                <div class="room-item" onclick="switchRoom(this, 'New Pet Parents')">
+                    <div class="room-name">👶 New Pet Parents</div>
+                    <div class="room-description">First-time pet owners</div>
+                    <div class="room-stats">
+                        <span>78 members</span>
+                        <span>15 online</span>
+                    </div>
+                </div>
+
+                <div class="room-item" onclick="switchRoom(this, 'Pet Training')">
+                    <div class="room-name">🎓 Pet Training</div>
+                    <div class="room-description">Training tips and tricks</div>
+                    <div class="room-stats">
+                        <span>94 members</span>
+                        <span>11 online</span>
+                    </div>
+                </div>
+
+                <div class="room-item" onclick="switchRoom(this, 'General Chat')">
+                    <div class="room-name">💬 General Chat</div>
+                    <div class="room-description">General pet discussions</div>
+                    <div class="room-stats">
+                        <span>203 members</span>
+                        <span>31 online</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Online Users -->
+            <div class="online-users">
+                <div class="online-users-header">
+                    <i class="fas fa-users"></i> Online Now (12)
+                </div>
+                <div class="user-item">
+                    <div class="user-status"></div>
+                    <span>Sarah_GoldenMom</span>
+                </div>
+                <div class="user-item">
+                    <div class="user-status"></div>
+                    <span>Mike_DogTrainer</span>
+                </div>
+                <div class="user-item">
+                    <div class="user-status"></div>
+                    <span>Jessica_VetTech</span>
+                </div>
+                <div class="user-item">
+                    <div class="user-status"></div>
+                    <span>Alex_PuppyLover</span>
+                </div>
+                <div class="user-item">
+                    <div class="user-status"></div>
+                    <span>Emma_DogWalker</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Chat Area -->
+        <div class="chat-main">
+            <!-- Chat Header -->
+            <div class="chat-header">
+                <div>
+                    <div class="chat-title" id="chatTitle">🐕 Golden Retrievers</div>
+                    <div class="chat-info" id="chatInfo">47 members • 12 online</div>
+                </div>
+                <div>
+                    <button class="btn btn-outline-light btn-sm me-2">
+                        <i class="fas fa-info-circle"></i> Room Info
+                    </button>
+                    <button class="btn btn-outline-light btn-sm">
+                        <i class="fas fa-cog"></i> Settings
+                    </button>
+                </div>
+            </div>
+
+            <!-- Messages Container -->
+            <div class="messages-container" id="messagesContainer">
+                <!-- System Message -->
+                <div class="system-message">
+                    Welcome to the Golden Retrievers chat room! Please be respectful and helpful.
+                </div>
+
+                <!-- Sample Messages -->
+                <div class="message">
+                    <div class="message-avatar">SM</div>
+                    <div class="message-content">
+                        <div class="message-header">
+                            <span class="message-author">Sarah_GoldenMom</span>
+                            <span class="message-time">10:30 AM</span>
+                        </div>
+                        <p class="message-text">Hi everyone! Just got my WhiskerMeal feeder set up. Any tips for getting Max to use it? He's a bit hesitant about new things.</p>
+                    </div>
+                </div>
+
+                <div class="message">
+                    <div class="message-avatar">MD</div>
+                    <div class="message-content">
+                        <div class="message-header">
+                            <span class="message-author">Mike_DogTrainer</span>
+                            <span class="message-time">10:32 AM</span>
+                        </div>
+                        <p class="message-text">Great choice on the feeder! Start by placing treats near it first, then gradually move them closer. Let him get comfortable with the machine's presence before using it for meals.</p>
+                    </div>
+                </div>
+
+                <div class="message">
+                    <div class="message-avatar">JV</div>
+                    <div class="message-content">
+                        <div class="message-header">
+                            <span class="message-author">Jessica_VetTech</span>
+                            <span class="message-time">10:35 AM</span>
+                        </div>
+                        <p class="message-text">@Sarah_GoldenMom Mike's advice is spot on! Also, try feeding him manually next to the machine for a few days. Golden Retrievers usually adapt quickly once they associate it with food.</p>
+                    </div>
+                </div>
+
+                <div class="message own">
+                    <div class="message-avatar">YOU</div>
+                    <div class="message-content">
+                        <div class="message-header">
+                            <span class="message-author">You</span>
+                            <span class="message-time">10:38 AM</span>
+                        </div>
+                        <p class="message-text">Thanks for the tips everyone! I'll definitely try the gradual approach. Max is pretty food-motivated so I think it'll work well.</p>
+                    </div>
+                </div>
+
+                <div class="message">
+                    <div class="message-avatar">AL</div>
+                    <div class="message-content">
+                        <div class="message-header">
+                            <span class="message-author">Alex_PuppyLover</span>
+                            <span class="message-time">10:40 AM</span>
+                        </div>
+                        <p class="message-text">Has anyone tried the disease prediction feature yet? I'm curious about how accurate it is.</p>
+                    </div>
+                </div>
+
+                <div class="message">
+                    <div class="message-avatar">ED</div>
+                    <div class="message-content">
+                        <div class="message-header">
+                            <span class="message-author">Emma_DogWalker</span>
+                            <span class="message-time">10:42 AM</span>
+                        </div>
+                        <p class="message-text">@Alex_PuppyLover I've been using it for 2 months now. It actually caught early signs of digestive issues with Luna before I noticed any symptoms. Really impressed!</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Typing Indicator -->
+            <div class="typing-indicator" id="typingIndicator">
+                <span id="typingUser">Sarah_GoldenMom</span> is typing<span class="typing-dots"></span>
+            </div>
+
+            <!-- Message Input -->
+            <div class="message-input-container">
+                <button class="emoji-btn" onclick="showEmojiPicker()">
+                    😊
+                </button>
+                <input type="text" class="message-input" id="messageInput" placeholder="Type your message..." maxlength="500">
+                <button class="send-btn" id="sendBtn" onclick="sendMessage()">
+                    <i class="fas fa-paper-plane"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        let currentRoom = 'Golden Retrievers';
+
+        // Switch Room
+        function switchRoom(element, roomName) {
+            // Update active room
+            document.querySelectorAll('.room-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            element.classList.add('active');
+
+            // Update room info
+            currentRoom = roomName;
+            document.getElementById('chatTitle').textContent = element.querySelector('.room-name').textContent;
+            document.getElementById('chatInfo').textContent = element.querySelector('.room-stats').textContent.replace(' ', ' members • ') + ' online';
+
+            // Clear messages and load room-specific messages
+            loadRoomMessages(roomName);
+            
+            // Hide sidebar on mobile
+            if (window.innerWidth <= 768) {
+                toggleSidebar();
+            }
+
+            showNotification(`Switched to ${roomName}`, 'info');
+        }
+
+        // Load Room Messages
+        function loadRoomMessages(roomName) {
+            const messagesContainer = document.getElementById('messagesContainer');
+            messagesContainer.innerHTML = `
+                <div class="system-message">
+                    Welcome to the ${roomName} chat room! Please be respectful and helpful.
+                </div>
+            `;
+
+            // Add some sample messages based on room
+            const roomMessages = {
+                'Cat Lovers': [
+                    { author: 'CatMom_Lisa', time: '11:00 AM', text: 'My cat absolutely loves the WhiskerMeal! No more begging at 5 AM 😂', avatar: 'CL' },
+                    { author: 'Whiskers_Dad', time: '11:05 AM', text: 'How do you set up different portions for multiple cats?', avatar: 'WD' },
+                    { author: 'Feline_Expert', time: '11:08 AM', text: '@Whiskers_Dad You can create separate profiles for each cat in the app!', avatar: 'FE' }
+                ],
+                'Pet Health': [
+                    { author: 'Dr_PetCare', time: '2:15 PM', text: 'Regular feeding schedules are crucial for pet health. WhiskerMeal helps maintain consistency!', avatar: 'DC' },
+                    { author: 'HealthyPets', time: '2:20 PM', text: 'The disease prediction feature gave me early warning about my dog\'s kidney issues. Very valuable!', avatar: 'HP' }
+                ],
+                'New Pet Parents': [
+                    { author: 'FirstTimeDogOwner', time: '9:30 AM', text: 'Just got a puppy! Any feeding schedule recommendations?', avatar: 'FT' },
+                    { author: 'ExperiencedOwner', time: '9:35 AM', text: 'Puppies need 3-4 meals per day. The WhiskerMeal scheduler makes it so easy!', avatar: 'EO' }
+                ]
+            };
+
+            if (roomMessages[roomName]) {
+                roomMessages[roomName].forEach(msg => {
+                    addMessage(msg.author, msg.text, msg.time, false, msg.avatar);
+                });
+            }
+        }
+
+        // Toggle Sidebar (Mobile)
+        function toggleSidebar() {
+            const sidebar = document.getElementById('chatSidebar');
+            sidebar.classList.toggle('show');
+        }
+
+        // Send Message
+        function sendMessage() {
+            const messageInput = document.getElementById('messageInput');
+            const messageText = messageInput.value.trim();
+            
+            if (messageText === '') return;
+            
+            // Add message to chat
+            const currentTime = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+            addMessage('You', messageText, currentTime, true, 'YOU');
+            
+            // Clear input
+            messageInput.value = '';
+            
+            // Simulate typing indicator and response
+            setTimeout(() => {
+                showTypingIndicator('Sarah_GoldenMom');
+                setTimeout(() => {
+                    hideTypingIndicator();
+                    const responses = [
+                        'That\'s a great point!',
+                        'Thanks for sharing that!',
+                        'I agree completely!',
+                        'That\'s really helpful information.',
+                        'My experience has been similar.',
+                        'Great advice, thanks!'
+                    ];
+                    const randomResponse = responses[Math.floor(Math.random() * responses.length)];
+                    addMessage('Sarah_GoldenMom', randomResponse, new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}), false, 'SM');
+                }, 2000);
+            }, 1000);
+        }
+
+        // Add Message to Chat
+        function addMessage(author, text, time, isOwn = false, avatar = '') {
+            const messagesContainer = document.getElementById('messagesContainer');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${isOwn ? 'own' : ''}`;
+            
+            messageDiv.innerHTML = `
+                <div class="message-avatar">${avatar || author.charAt(0).toUpperCase()}</div>
+                <div class="message-content">
+                    <div class="message-header">
+                        <span class="message-author">${author}</span>
+                        <span class="message-time">${time}</span>
+                    </div>
+                    <p class="message-text">${text}</p>
+                </div>
+            `;
+            
+            messagesContainer.appendChild(messageDiv);
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
+
+        // Show Typing Indicator
+        function showTypingIndicator(username) {
+            const indicator = document.getElementById('typingIndicator');
+            document.getElementById('typingUser').textContent = username;
+            indicator.style.display = 'block';
+        }
+
+        // Hide Typing Indicator
+        function hideTypingIndicator() {
+            document.getElementById('typingIndicator').style.display = 'none';
+        }
+
+        // Show Emoji Picker (Placeholder)
+        function showEmojiPicker() {
+            showNotification('Emoji picker coming soon! 😊', 'info');
+        }
+
+        // Enter Key to Send
+        document.getElementById('messageInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                sendMessage();
+            }
+        });
+
+        // Enable/Disable Send Button
+        document.getElementById('messageInput').addEventListener('input', function() {
+            const sendBtn = document.getElementById('sendBtn');
+            sendBtn.disabled = this.value.trim() === '';
+        });
+
+        // Notification System
+        function showNotification(message, type = 'info') {
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed;
+                top: 80px;
+                right: 20px;
+                background: ${type === 'success' ? '#28a745' : type === 'error' ? '#dc3545' : '#341536'};
+                color: white;
+                padding: 12px 18px;
+                border-radius: 8px;
+                z-index: 10001;
+                font-weight: bold;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+                max-width: 250px;
+                font-size: 14px;
+            `;
+            notification.textContent = message;
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.remove();
+            }, 3000);
+        }
+
+        // Simulate Online Users Update
+        function updateOnlineCount() {
+            const count = Math.floor(Math.random() * 10) + 20;
+            document.getElementById('onlineCount').textContent = count;
+        }
+
+        // Auto-scroll to bottom
+        function scrollToBottom() {
+            const container = document.getElementById('messagesContainer');
+            container.scrollTop = container.scrollHeight;
+        }
+
+        // Simulate periodic messages
+        function simulateActivity() {
+            const users = ['Sarah_GoldenMom', 'Mike_DogTrainer', 'Jessica_VetTech', 'Alex_PuppyLover', 'Emma_DogWalker'];
+            const messages = [
+                'How often should I clean the WhiskerMeal feeder?',
+                'The scheduling feature is amazing! My dog loves the routine.',
+                'Anyone else getting great results with the health tracking?',
+                'Just want to say this community is so helpful! Thank you all.',
+                'My vet was impressed with the feeding data from WhiskerMeal.',
+                'The portion control has really helped with weight management.'
+            ];
+            
+            if (Math.random() < 0.3) { // 30% chance every 30 seconds
+                const randomUser = users[Math.floor(Math.random() * users.length)];
+                const randomMessage = messages[Math.floor(Math.random() * messages.length)];
+                const currentTime = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+                
+                addMessage(randomUser, randomMessage, currentTime, false, randomUser.split('_')[0].substring(0, 2).toUpperCase());
+            }
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initial setup
+            scrollToBottom();
+            document.getElementById('sendBtn').disabled = true;
+            
+            showNotification('Welcome to WhiskerMeal Community! 🐾', 'success');
+            
+            // Update online count periodically
+            setInterval(updateOnlineCount, 30000);
+            
+            // Simulate chat activity
+            setInterval(simulateActivity, 30000);
+            
+            // Hide sidebar on mobile by default
+            if (window.innerWidth <= 768) {
+                document.getElementById('chatSidebar').classList.remove('show');
+            }
+        });
+
+        // Handle window resize
+        window.addEventListener('resize', function() {
+            if (window.innerWidth > 768) {
+                document.getElementById('chatSidebar').classList.remove('show');
+            }
+        });
+
+        // Close sidebar when clicking outside on mobile
+        document.addEventListener('click', function(e) {
+            const sidebar = document.getElementById('chatSidebar');
+            const menuBtn = document.querySelector('.mobile-menu-btn');
+            
+            if (window.innerWidth <= 768 && 
+                sidebar.classList.contains('show') && 
+                !sidebar.contains(e.target) && 
+                !menuBtn.contains(e.target)) {
+                sidebar.classList.remove('show');
+            }
+        });
+    </script>
+</body>
+</html>

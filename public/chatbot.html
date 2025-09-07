@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WhiskerMeal - AI Assistant</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <!-- jQuery -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <style>
+        body {
+            background-color: white;
+            font-family: Arial, sans-serif;
+            color: #341536;
+            height: 100vh;
+        }
+
+        /* Navigation */
+        .navbar {
+            background-color: #341536;
+            padding: 10px 0;
+        }
+
+        .navbar-brand {
+            color: white !important;
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .back-btn {
+            color: white;
+            text-decoration: none;
+            font-size: 18px;
+            margin-right: 20px;
+        }
+
+        .back-btn:hover {
+            color: #ADEBB3;
+            text-decoration: none;
+        }
+
+        /* Chat Container */
+        .chat-container {
+            height: calc(100vh - 60px);
+            margin-top: 60px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .chat {
+            width: 100%;
+            max-width: 600px;
+            height: 80vh;
+        }
+
+        .card {
+            height: 100%;
+            border: 2px solid #ADEBB3;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(52, 21, 54, 0.1);
+        }
+
+        /* Chat Header */
+        .msg_head {
+            background-color: #341536;
+            color: white;
+            border-radius: 13px 13px 0 0;
+            padding: 15px;
+        }
+
+        .user_img {
+            width: 50px;
+            height: 50px;
+            border: 2px solid #ADEBB3;
+        }
+
+        .online_icon {
+            position: absolute;
+            width: 15px;
+            height: 15px;
+            background-color: #28a745;
+            border-radius: 50%;
+            bottom: 0;
+            right: 0;
+            border: 2px solid white;
+        }
+
+        .img_cont {
+            position: relative;
+            height: 50px;
+            width: 50px;
+        }
+
+        .user_info {
+            margin-left: 15px;
+        }
+
+        .user_info span {
+            font-size: 20px;
+            font-weight: bold;
+            color: #ADEBB3;
+        }
+
+        .user_info p {
+            font-size: 14px;
+            margin: 0;
+            opacity: 0.9;
+        }
+
+        /* Messages Area */
+        .msg_card_body {
+            overflow-y: auto;
+            height: calc(100% - 140px);
+            padding: 20px;
+            background-color: #f8f9fa;
+        }
+
+        .msg_cotainer {
+            background-color: rgba(173, 235, 179, 0.8);
+            border: 2px solid #ADEBB3;
+            border-radius: 15px 15px 15px 5px;
+            padding: 12px 15px;
+            margin-left: 10px;
+            position: relative;
+            max-width: 80%;
+        }
+
+        .msg_cotainer_send {
+            background-color: rgba(52, 21, 54, 0.8);
+            color: white;
+            border: 2px solid #341536;
+            border-radius: 15px 15px 5px 15px;
+            padding: 12px 15px;
+            margin-right: 10px;
+            position: relative;
+            max-width: 80%;
+        }
+
+        .msg_time {
+            position: absolute;
+            left: 0;
+            bottom: -15px;
+            color: #666;
+            font-size: 10px;
+        }
+
+        .msg_time_send {
+            position: absolute;
+            right: 0;
+            bottom: -15px;
+            color: #666;
+            font-size: 10px;
+        }
+
+        .img_cont_msg {
+            height: 40px;
+            width: 40px;
+        }
+
+        .user_img_msg {
+            height: 40px;
+            width: 40px;
+            border: 2px solid #ADEBB3;
+        }
+
+        /* Message Input */
+        .card-footer {
+            border-top: 2px solid #ADEBB3;
+            background-color: white;
+            padding: 15px;
+            border-radius: 0 0 13px 13px;
+        }
+
+        .type_msg {
+            border: 2px solid #e9ecef;
+            border-radius: 25px;
+            padding: 12px 20px;
+            font-size: 16px;
+        }
+
+        .type_msg:focus {
+            border-color: #ADEBB3;
+            box-shadow: 0 0 0 0.2rem rgba(173, 235, 179, 0.25);
+        }
+
+        .send_btn {
+            background-color: #341536;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            transition: all 0.3s ease;
+        }
+
+        .send_btn:hover {
+            background-color: #4a1f3f;
+            transform: scale(1.05);
+        }
+
+        .input-group-append {
+            margin-left: 10px;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .chat-container {
+                padding: 10px;
+                height: calc(100vh - 50px);
+                margin-top: 50px;
+            }
+            
+            .chat {
+                height: 90vh;
+            }
+            
+            .msg_cotainer,
+            .msg_cotainer_send {
+                max-width: 90%;
+            }
+        }
+
+        /* Scrollbar Styling */
+        .msg_card_body::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .msg_card_body::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+
+        .msg_card_body::-webkit-scrollbar-thumb {
+            background: #ADEBB3;
+            border-radius: 3px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar fixed-top">
+        <div class="container-fluid">
+            <div class="d-flex align-items-center">
+                <a href="homepage.html" class="back-btn">
+                    <i class="fas fa-arrow-left"></i> Back to Dashboard
+                </a>
+                <a class="navbar-brand">🤖 WhiskerMeal AI Assistant</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Chat Container -->
+    <div class="chat-container">
+        <div class="chat">
+            <div class="card">
+                <div class="card-header msg_head">
+                    <div class="d-flex bd-highlight">
+                        <div class="img_cont">
+                            <img src="https://i.ibb.co/fSNP7Rz/icons8-chatgpt-512.png" class="rounded-circle user_img">
+                            <span class="online_icon"></span>
+                        </div>
+                        <div class="user_info">
+                            <span>PetBot Assistant</span>
+                            <p>Ask me anything about pet care!</p>
+                        </div>
+                    </div>
+                </div>
+                <div id="messageFormeight" class="card-body msg_card_body">
+                    <!-- Welcome Message -->
+                    <div class="d-flex justify-content-start mb-4">
+                        <div class="img_cont_msg">
+                            <img src="https://i.ibb.co/fSNP7Rz/icons8-chatgpt-512.png" class="rounded-circle user_img_msg">
+                        </div>
+                        <div class="msg_cotainer">
+                            Hello! I'm PetBot, your AI pet care assistant. I can help you with feeding schedules, health advice, training tips, and WhiskerMeal device support. What would you like to know about your pet today?
+                            <span class="msg_time">Just now</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <form id="messageArea" class="input-group">
+                        <input type="text" id="text" name="msg" placeholder="Type your message..." autocomplete="off" class="form-control type_msg" required/>
+                        <div class="input-group-append">
+                            <button type="submit" id="send" class="input-group-text send_btn">
+                                <i class="fas fa-paper-plane"></i>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        $(document).ready(function() {
+            $("#messageArea").on("submit", function(event) {
+                const date = new Date();
+                const hour = date.getHours();
+                const minute = date.getMinutes();
+                const str_time = hour + ":" + minute;
+                var rawText = $("#text").val();
+                
+                var userHtml = '<div class="d-flex justify-content-end mb-4"><div class="msg_cotainer_send">' + rawText + '<span class="msg_time_send">' + str_time + '</span></div><div class="img_cont_msg"><img src="https://i.ibb.co/d5b84Xw/Untitled-design.png" class="rounded-circle user_img_msg"></div></div>';
+                
+                $("#text").val("");
+                $("#messageFormeight").append(userHtml);
+                
+                // Auto scroll to bottom
+                $("#messageFormeight").scrollTop($("#messageFormeight")[0].scrollHeight);
+                
+                $.ajax({
+                    data: {
+                        msg: rawText,
+                    },
+                    type: "POST",
+                    url: "/get",
+                }).done(function(data) {
+                    var botHtml = '<div class="d-flex justify-content-start mb-4"><div class="img_cont_msg"><img src="https://i.ibb.co/fSNP7Rz/icons8-chatgpt-512.png" class="rounded-circle user_img_msg"></div><div class="msg_cotainer">' + data + '<span class="msg_time">' + str_time + '</span></div></div>';
+                    $("#messageFormeight").append($.parseHTML(botHtml));
+                    
+                    // Auto scroll to bottom
+                    $("#messageFormeight").scrollTop($("#messageFormeight")[0].scrollHeight);
+                }).fail(function() {
+                    // Fallback response if server is not available
+                    var fallbackResponse = "I'm sorry, I'm having trouble connecting right now. Please try again later.";
+                    var botHtml = '<div class="d-flex justify-content-start mb-4"><div class="img_cont_msg"><img src="https://i.ibb.co/fSNP7Rz/icons8-chatgpt-512.png" class="rounded-circle user_img_msg"></div><div class="msg_cotainer">' + fallbackResponse + '<span class="msg_time">' + str_time + '</span></div></div>';
+                    $("#messageFormeight").append($.parseHTML(botHtml));
+                    
+                    // Auto scroll to bottom
+                    $("#messageFormeight").scrollTop($("#messageFormeight")[0].scrollHeight);
+                });
+                
+                event.preventDefault();
+            });
+        });
+    </script>
+</body>
+</html>

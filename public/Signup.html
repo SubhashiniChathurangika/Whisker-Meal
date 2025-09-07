@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WhiskerMeal - Pet Registration</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: white;
+            font-family: Arial, sans-serif;
+            color: #341536;
+        }
+
+        .header {
+            background-color: #341536;
+            color: white;
+            padding: 20px 0;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            text-align: center;
+            margin: 0;
+        }
+
+        .registration-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .form-card {
+            background: white;
+            border: 2px solid #ADEBB3;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 5px 15px rgba(52, 21, 54, 0.1);
+        }
+
+        .photo-section {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .photo-upload {
+            position: relative;
+            display: inline-block;
+        }
+
+        .photo-preview {
+            width: 150px;
+            height: 150px;
+            border: 3px solid #ADEBB3;
+            border-radius: 50%;
+            background-color: #f8f9fa;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 60px;
+            color: #341536;
+            margin-bottom: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .photo-preview:hover {
+            border-color: #341536;
+            background-color: #ADEBB3;
+        }
+
+        .photo-input {
+            display: none;
+        }
+
+        .photo-btn {
+            background-color: #ADEBB3;
+            color: #341536;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .photo-btn:hover {
+            background-color: #341536;
+            color: white;
+        }
+
+        .form-section {
+            margin-bottom: 25px;
+        }
+
+        .section-title {
+            color: #341536;
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 15px;
+            border-bottom: 2px solid #ADEBB3;
+            padding-bottom: 5px;
+        }
+
+        .form-label {
+            color: #341536;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .form-control, .form-select {
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            padding: 12px 15px;
+            font-size: 16px;
+            margin-bottom: 15px;
+        }
+
+        .form-control:focus, .form-select:focus {
+            border-color: #ADEBB3;
+            box-shadow: 0 0 0 0.2rem rgba(173, 235, 179, 0.25);
+        }
+
+        .btn-register {
+            background-color: #341536;
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 25px;
+            font-size: 18px;
+            font-weight: bold;
+            width: 100%;
+            margin-top: 20px;
+        }
+
+        .btn-register:hover {
+            background-color: #4a1f3f;
+            color: white;
+        }
+
+        .password-strength {
+            margin-top: 5px;
+            font-size: 14px;
+        }
+
+        .strength-weak { color: #dc3545; }
+        .strength-medium { color: #ffc107; }
+        .strength-strong { color: #28a745; }
+
+        .login-link {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .login-link a {
+            color: #341536;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .login-link a:hover {
+            color: #ADEBB3;
+        }
+
+        @media (max-width: 768px) {
+            .registration-container {
+                padding: 10px;
+            }
+            
+            .form-card {
+                padding: 20px;
+            }
+            
+            .photo-preview {
+                width: 120px;
+                height: 120px;
+                font-size: 50px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <div class="header">
+        <h1>🐾 WhiskerMeal - Register Your Pet</h1>
+    </div>
+
+    <!-- Registration Form -->
+    <div class="registration-container">
+        <div class="form-card">
+            <!-- Pet Photo Section -->
+            <div class="photo-section">
+                <div class="photo-upload">
+                    <div class="photo-preview" id="photoPreview">
+                        📸
+                    </div>
+                    <input type="file" class="photo-input" id="petPhoto" accept="image/*">
+                    <br>
+                    <button type="button" class="photo-btn" onclick="document.getElementById('petPhoto').click()">
+                        Upload Pet Photo
+                    </button>
+                </div>
+            </div>
+
+            <!-- Registration Form -->
+            <form id="registrationForm">
+                <!-- User Information Section -->
+                <div class="form-section">
+                    <div class="section-title">👤 User Information</div>
+                    
+                    <label for="userName" class="form-label">User Name</label>
+                    <input type="text" class="form-control" id="userName" name="userName" required>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <label for="password" class="form-label">Password</label>
+                            <input type="password" class="form-control" id="password" name="password" required minlength="6">
+                            <div id="passwordStrength" class="password-strength"></div>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="confirmPassword" class="form-label">Confirm Password</label>
+                            <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" required>
+                            <div id="passwordMatch" style="font-size: 14px; margin-top: 5px;"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Pet Information Section -->
+                <div class="form-section">
+                    <div class="section-title">🐾 Pet Information</div>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <label for="petName" class="form-label">Pet Name</label>
+                            <input type="text" class="form-control" id="petName" name="petName" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="petType" class="form-label">Pet Type</label>
+                            <select class="form-select" id="petType" name="petType" required>
+                                <option value="">Select Pet Type</option>
+                                <option value="Dog">Dog</option>
+                                <option value="Cat">Cat</option>
+                                <option value="Both">Both (Dog & Cat)</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-4">
+                            <label for="petAge" class="form-label">Pet Age (years)</label>
+                            <input type="number" class="form-control" id="petAge" name="petAge" min="0" max="30" step="0.1" required>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="petWeight" class="form-label">Weight (kg)</label>
+                            <input type="number" class="form-control" id="petWeight" name="petWeight" min="0.1" max="200" step="0.1" required>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="petBreed" class="form-label">Breed</label>
+                            <input type="text" class="form-control" id="petBreed" name="petBreed" placeholder="e.g., Golden Retriever" required>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Submit Button -->
+                <button type="submit" class="btn-register" id="registerBtn">
+                    Register Pet & Create Account
+                </button>
+            </form>
+
+            <!-- Login Link -->
+            <div class="login-link">
+                <p>Already have an account? <a href="/login">Sign In Here</a></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        // Photo Upload Functionality
+        document.getElementById('petPhoto').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            const preview = document.getElementById('photoPreview');
+            
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    preview.innerHTML = `<img src="${e.target.result}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">`;
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        // Password Strength Checker
+        document.getElementById('password').addEventListener('input', function() {
+            const password = this.value;
+            const strengthDiv = document.getElementById('passwordStrength');
+            
+            if (password.length === 0) {
+                strengthDiv.innerHTML = '';
+                return;
+            }
+            
+            let strength = 0;
+            if (password.length >= 6) strength++;
+            if (password.match(/[a-z]/)) strength++;
+            if (password.match(/[A-Z]/)) strength++;
+            if (password.match(/[0-9]/)) strength++;
+            if (password.match(/[^a-zA-Z0-9]/)) strength++;
+            
+            if (strength <= 2) {
+                strengthDiv.innerHTML = '<span class="strength-weak">Weak password</span>';
+            } else if (strength <= 3) {
+                strengthDiv.innerHTML = '<span class="strength-medium">Medium password</span>';
+            } else {
+                strengthDiv.innerHTML = '<span class="strength-strong">Strong password</span>';
+            }
+        });
+
+        // Password Confirmation Checker
+        document.getElementById('confirmPassword').addEventListener('input', function() {
+            const password = document.getElementById('password').value;
+            const confirmPassword = this.value;
+            const matchDiv = document.getElementById('passwordMatch');
+            
+            if (confirmPassword === '') {
+                matchDiv.innerHTML = '';
+                return;
+            }
+            
+            if (password === confirmPassword) {
+                matchDiv.innerHTML = '<span style="color: #28a745;">Passwords match ✓</span>';
+            } else {
+                matchDiv.innerHTML = '<span style="color: #dc3545;">Passwords do not match ✗</span>';
+            }
+        });
+
+        // Form Submission
+        document.getElementById('registrationForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(this);
+            const password = formData.get('password');
+            const confirmPassword = formData.get('confirmPassword');
+            
+            // Validation
+            if (password !== confirmPassword) {
+                alert('Passwords do not match!');
+                return;
+            }
+            
+            if (password.length < 6) {
+                alert('Password must be at least 6 characters long!');
+                return;
+            }
+            
+            // Show loading
+            const registerBtn = document.getElementById('registerBtn');
+            registerBtn.innerHTML = 'Creating Account...';
+            registerBtn.disabled = true;
+            
+            // Collect all form data
+            const registrationData = {
+                userName: formData.get('userName'),
+                petName: formData.get('petName'),
+                petType: formData.get('petType'),
+                petAge: formData.get('petAge'),
+                petWeight: formData.get('petWeight'),
+                petBreed: formData.get('petBreed'),
+                password: formData.get('password')
+            };
+            
+            // Simulate registration process
+            setTimeout(() => {
+                alert('Registration successful! Welcome to WhiskerMeal, ' + registrationData.userName + '!');
+                console.log('Registration Data:', registrationData);
+                
+                // Reset button
+                registerBtn.innerHTML = 'Register Pet & Create Account';
+                registerBtn.disabled = false;
+                
+                // Redirect to login or dashboard
+                // window.location.href = 'login.html';
+            }, 2000);
+        });
+
+        // Auto-capitalize pet name and breed
+        document.getElementById('petName').addEventListener('input', function() {
+            this.value = this.value.replace(/\b\w/g, l => l.toUpperCase());
+        });
+        
+        document.getElementById('petBreed').addEventListener('input', function() {
+            this.value = this.value.replace(/\b\w/g, l => l.toUpperCase());
+        });
+
+        // Age validation
+        document.getElementById('petAge').addEventListener('input', function() {
+            if (this.value > 30) {
+                this.value = 30;
+            }
+            if (this.value < 0) {
+                this.value = 0;
+            }
+        });
+
+        // Weight validation
+        document.getElementById('petWeight').addEventListener('input', function() {
+            if (this.value > 200) {
+                this.value = 200;
+            }
+            if (this.value < 0) {
+                this.value = 0;
+            }
+        });
+    </script>
+</head>
+</html>

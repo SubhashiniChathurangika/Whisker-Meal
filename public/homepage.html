@@ -1,0 +1,728 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WhiskerMeal - Dashboard</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: white;
+            font-family: Arial, sans-serif;
+            color: #341536;
+        }
+
+        /* Navigation */
+        .navbar {
+            background-color: #341536;
+            padding: 10px 0;
+        }
+
+        .navbar-brand {
+            color: white !important;
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .pet-profile {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: white;
+        }
+
+        .pet-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: #ADEBB3;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            color: #341536;
+        }
+
+        .pet-name {
+            font-weight: bold;
+        }
+
+        .notification-icon {
+            position: relative;
+            color: white;
+            font-size: 20px;
+            margin-left: 20px;
+            cursor: pointer;
+        }
+
+        .notification-count {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background-color: #dc3545;
+            color: white;
+            border-radius: 50%;
+            width: 18px;
+            height: 18px;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Hamburger Menu */
+        .hamburger {
+            display: flex;
+            flex-direction: column;
+            cursor: pointer;
+            padding: 5px;
+        }
+
+        .hamburger span {
+            width: 25px;
+            height: 3px;
+            background-color: white;
+            margin: 3px 0;
+            transition: 0.3s;
+        }
+
+        .sidebar {
+            position: fixed;
+            left: -250px;
+            top: 0;
+            width: 250px;
+            height: 100vh;
+            background-color: #341536;
+            transition: 0.3s;
+            z-index: 1000;
+            padding-top: 60px;
+        }
+
+        .sidebar.active {
+            left: 0;
+        }
+
+        .sidebar ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .sidebar ul li {
+            padding: 15px 20px;
+            border-bottom: 1px solid rgba(173, 235, 179, 0.2);
+        }
+
+        .sidebar ul li a {
+            color: white;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .sidebar ul li:hover {
+            background-color: #ADEBB3;
+        }
+
+        .sidebar ul li:hover a {
+            color: #341536;
+        }
+
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            z-index: 999;
+            display: none;
+        }
+
+        .overlay.active {
+            display: block;
+        }
+
+        /* Dashboard Content */
+        .dashboard-container {
+            padding: 30px 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .dashboard-header {
+            background-color: #341536;
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .card {
+            background: white;
+            border: 2px solid #ADEBB3;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 3px 10px rgba(52, 21, 54, 0.1);
+        }
+
+        .card-header {
+            background-color: #341536;
+            color: white;
+            padding: 15px;
+            margin: -20px -20px 20px -20px;
+            border-radius: 8px 8px 0 0;
+            font-size: 18px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* Pet Status */
+        .status-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .pet-image {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background-color: #ADEBB3;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 40px;
+            color: #341536;
+        }
+
+        .status-details h4 {
+            color: #341536;
+            margin-bottom: 5px;
+        }
+
+        .status-indicator {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+
+        .status-online {
+            background-color: #28a745;
+        }
+
+        .status-offline {
+            background-color: #dc3545;
+        }
+
+        .feed-btn {
+            background-color: #ADEBB3;
+            color: #341536;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 25px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-right: 10px;
+        }
+
+        .feed-btn:hover {
+            background-color: #341536;
+            color: white;
+        }
+
+        .emergency-btn {
+            background-color: #dc3545;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 25px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .emergency-btn:hover {
+            background-color: #c82333;
+        }
+
+        /* Schedule Items */
+        .schedule-item {
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            border-left: 4px solid #ADEBB3;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .schedule-time {
+            font-weight: bold;
+            color: #341536;
+        }
+
+        .schedule-status {
+            padding: 5px 15px;
+            border-radius: 15px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .status-completed {
+            background-color: #ADEBB3;
+            color: #341536;
+        }
+
+        .status-pending {
+            background-color: #ffc107;
+            color: #333;
+        }
+
+        .status-missed {
+            background-color: #dc3545;
+            color: white;
+        }
+
+        /* Container Level */
+        .level-container {
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .level-circle {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            background: conic-gradient(#ADEBB3 0deg 270deg, #e9ecef 270deg 360deg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 15px;
+            position: relative;
+        }
+
+        .level-circle::before {
+            content: '';
+            width: 120px;
+            height: 120px;
+            background-color: white;
+            border-radius: 50%;
+            position: absolute;
+        }
+
+        .level-text {
+            position: relative;
+            z-index: 1;
+            font-size: 24px;
+            font-weight: bold;
+            color: #341536;
+        }
+
+        .refill-btn {
+            background-color: #341536;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .refill-btn:hover {
+            background-color: #4a1f3f;
+        }
+
+        /* Statistics */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 15px;
+        }
+
+        .stat-item {
+            text-align: center;
+            padding: 15px;
+            background-color: #ADEBB3;
+            border-radius: 10px;
+            color: #341536;
+        }
+
+        .stat-number {
+            font-size: 24px;
+            font-weight: bold;
+            display: block;
+        }
+
+        .stat-label {
+            font-size: 14px;
+            margin-top: 5px;
+        }
+
+        /* Chatbot */
+        .chatbot {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 60px;
+            height: 60px;
+            background-color: #341536;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(52, 21, 54, 0.3);
+            z-index: 1000;
+        }
+
+        .chatbot:hover {
+            background-color: #ADEBB3;
+        }
+
+        .chatbot i {
+            color: white;
+            font-size: 24px;
+        }
+
+        .chatbot:hover i {
+            color: #341536;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .pet-profile .pet-name {
+                display: none;
+            }
+            
+            .dashboard-container {
+                padding: 20px 10px;
+            }
+            
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container-fluid">
+            <div class="d-flex align-items-center">
+                <div class="hamburger" id="hamburger">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+                <a class="navbar-brand ms-3">🐾 WhiskerMeal</a>
+            </div>
+            
+            <div class="d-flex align-items-center">
+                <!-- Pet Profile -->
+                <div class="pet-profile">
+                    <div class="pet-avatar" id="navPetAvatar">🐕</div>
+                    <div class="pet-name" id="navPetName">Buddy</div>
+                </div>
+                
+                <!-- Notifications -->
+                <div class="notification-icon" id="notificationIcon">
+                    <i class="fas fa-bell"></i>
+                    <span class="notification-count" id="notificationCount">3</span>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Sidebar -->
+    <div class="sidebar" id="sidebar">
+        <ul>
+            <li><a href="/profile"><i class="fas fa-user"></i> Profile</a></li>
+            <li><a href="/reminder"><i class="fas fa-bell"></i> Set Reminders</a></li>
+            <li><a href="/schedule"><i class="fas fa-calendar"></i> Feeding Schedule</a></li>
+            <li><a href="/disease"><i class="fas fa-stethoscope"></i> Disease Diagnose</a></li>
+            <li><a href="/community"><i class="fas fa-users"></i> Community</a></li>
+            <li><a href="/about"><i class="fas fa-info-circle"></i> About</a></li>
+        </ul>
+    </div>
+
+    <!-- Overlay -->
+    <div class="overlay" id="overlay"></div>
+
+    <!-- Dashboard Content -->
+    <div class="dashboard-container">
+        <!-- Dashboard Header -->
+        <div class="dashboard-header">
+            <h1>Welcome to Your Pet Dashboard</h1>
+            <p>Monitor and manage your pet's feeding routine</p>
+        </div>
+
+        <div class="row">
+            <!-- Pet Status -->
+            <div class="col-lg-6 col-md-12">
+                <div class="card">
+                    <div class="card-header">
+                        <i class="fas fa-paw"></i>
+                        Pet Status
+                    </div>
+                    <div class="status-info">
+                        <div class="pet-image" id="petImage">🐕</div>
+                        <div class="status-details">
+                            <h4 id="petName">Buddy</h4>
+                            <p><span class="status-indicator status-online"></span>Machine Online</p>
+                            <p><strong>Last Fed:</strong> <span id="lastFed">2 hours ago</span></p>
+                            <p><strong>Next Feeding:</strong> <span id="nextFeeding">4:00 PM</span></p>
+                            <p><strong>Health Status:</strong> <span style="color: #28a745;">Excellent</span></p>
+                        </div>
+                    </div>
+                    <div>
+                        <button class="feed-btn" onclick="feedNow()">Feed Now</button>
+                        <button class="emergency-btn" onclick="emergencyStop()">Emergency Stop</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Today's Feeding Schedule -->
+            <div class="col-lg-6 col-md-12">
+                <div class="card">
+                    <div class="card-header">
+                        <i class="fas fa-clock"></i>
+                        Today's Feeding Schedule
+                    </div>
+                    <div id="scheduleContainer">
+                        <div class="schedule-item">
+                            <div>
+                                <div class="schedule-time">7:00 AM - Breakfast</div>
+                                <small>Dry food, 150g</small>
+                            </div>
+                            <span class="schedule-status status-completed">Completed</span>
+                        </div>
+                        <div class="schedule-item">
+                            <div>
+                                <div class="schedule-time">12:00 PM - Lunch</div>
+                                <small>Wet food, 100g</small>
+                            </div>
+                            <span class="schedule-status status-completed">Completed</span>
+                        </div>
+                        <div class="schedule-item">
+                            <div>
+                                <div class="schedule-time">6:00 PM - Dinner</div>
+                                <small>Dry food, 150g</small>
+                            </div>
+                            <span class="schedule-status status-pending">Pending</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <!-- Container Level -->
+            <div class="col-lg-6 col-md-12">
+                <div class="card">
+                    <div class="card-header">
+                        <i class="fas fa-bowl-food"></i>
+                        Food Container Level
+                    </div>
+                    <div class="level-container">
+                        <div class="level-circle" id="foodLevelCircle">
+                            <div class="level-text" id="foodLevelText">75%</div>
+                        </div>
+                        <p><strong>Days Remaining:</strong> <span id="daysRemaining">3 days</span></p>
+                        <p><strong>Last Refilled:</strong> <span id="lastRefilled">3 days ago</span></p>
+                        <button class="refill-btn" onclick="markRefilled()">Mark as Refilled</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Weekly Statistics -->
+            <div class="col-lg-6 col-md-12">
+                <div class="card">
+                    <div class="card-header">
+                        <i class="fas fa-chart-bar"></i>
+                        Weekly Statistics
+                    </div>
+                    <div class="stats-grid">
+                        <div class="stat-item">
+                            <span class="stat-number" id="mealsServed">21</span>
+                            <div class="stat-label">Meals Served</div>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-number" id="foodConsumed">2.1kg</span>
+                            <div class="stat-label">Food Consumed</div>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-number" id="scheduleAccuracy">98%</span>
+                            <div class="stat-label">Schedule Accuracy</div>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-number" id="avgMealTime">2.5min</span>
+                            <div class="stat-label">Avg Meal Time</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Chatbot -->
+    <div class="chatbot" id="chatbot">
+        <i class="fas fa-robot"></i>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        // Hamburger Menu
+        const hamburger = document.getElementById('hamburger');
+        const sidebar = document.getElementById('sidebar');
+        const overlay = document.getElementById('overlay');
+
+        hamburger.addEventListener('click', function() {
+            sidebar.classList.toggle('active');
+            overlay.classList.toggle('active');
+        });
+
+        overlay.addEventListener('click', function() {
+            sidebar.classList.remove('active');
+            overlay.classList.remove('active');
+        });
+
+        // Sidebar menu items
+        document.querySelectorAll('.sidebar ul li a').forEach(item => {
+            item.addEventListener('click', function(e) {
+                e.preventDefault();
+                const menuItem = this.textContent.trim();
+                showNotification(`Opening ${menuItem}...`, 'info');
+                window.setTimeout(() => {
+                    window.location.href = item.href;
+                }, 1000);
+                sidebar.classList.remove('active');
+                overlay.classList.remove('active');
+            });
+        });
+
+        // Feed Now Function
+        function feedNow() {
+            showNotification('Feeding command sent to machine!', 'success');
+            const feedBtn = event.target;
+            feedBtn.innerHTML = 'Feeding...';
+            feedBtn.disabled = true;
+            
+            setTimeout(() => {
+                feedBtn.innerHTML = 'Feed Now';
+                feedBtn.disabled = false;
+                showNotification('Feeding completed successfully!', 'success');
+                updateLastFed();
+                updateStats();
+            }, 3000);
+        }
+
+        // Emergency Stop Function
+        function emergencyStop() {
+            if (confirm('Are you sure you want to emergency stop the feeding machine?')) {
+                showNotification('Emergency stop activated!', 'error');
+            }
+        }
+
+        // Mark as Refilled Function
+        function markRefilled() {
+            document.getElementById('foodLevelText').innerHTML = '100%';
+            document.getElementById('daysRemaining').innerHTML = '7 days';
+            document.getElementById('lastRefilled').innerHTML = 'Just now';
+            updateFoodLevelCircle(100);
+            showNotification('Container marked as refilled!', 'success');
+        }
+
+        // Update Last Fed
+        function updateLastFed() {
+            document.getElementById('lastFed').innerHTML = 'Just now';
+        }
+
+        // Update Statistics
+        function updateStats() {
+            const mealsElement = document.getElementById('mealsServed');
+            let currentMeals = parseInt(mealsElement.innerHTML);
+            mealsElement.innerHTML = currentMeals + 1;
+        }
+
+        // Update Food Level Circle
+        function updateFoodLevelCircle(percentage) {
+            const circle = document.getElementById('foodLevelCircle');
+            const degrees = (percentage / 100) * 360;
+            circle.style.background = `conic-gradient(#ADEBB3 0deg ${degrees}deg, #e9ecef ${degrees}deg 360deg)`;
+        }
+
+        // Notification System
+        function showNotification(message, type = 'info') {
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: ${type === 'success' ? '#28a745' : type === 'error' ? '#dc3545' : '#341536'};
+                color: white;
+                padding: 15px 20px;
+                border-radius: 8px;
+                z-index: 10000;
+                font-weight: bold;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            `;
+            notification.textContent = message;
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.remove();
+            }, 3000);
+        }
+
+        // Notification Icon Click
+        document.getElementById('notificationIcon').addEventListener('click', function() {
+            showNotification('You have 3 new notifications', 'info');
+        });
+
+        // Chatbot Click
+        document.getElementById('chatbot').addEventListener('click', function() {
+            showNotification('Chatbot: Hello! How can I help you today?', 'info');
+        });
+
+        // Simulate real-time updates
+        setInterval(() => {
+            // Update food level gradually
+            const foodLevelText = document.getElementById('foodLevelText');
+            let currentLevel = parseInt(foodLevelText.innerHTML);
+            
+            if (currentLevel > 10 && Math.random() < 0.3) {
+                currentLevel -= 1;
+                foodLevelText.innerHTML = currentLevel + '%';
+                updateFoodLevelCircle(currentLevel);
+                
+                const days = Math.ceil(currentLevel / 25);
+                document.getElementById('daysRemaining').innerHTML = days + ' days';
+                
+                if (currentLevel <= 20) {
+                    showNotification('⚠️ Food level is running low!', 'error');
+                }
+            }
+        }, 10000); // Update every 10 seconds
+
+        // Initialize dashboard
+        document.addEventListener('DOMContentLoaded', function() {
+            showNotification('Welcome to WhiskerMeal Dashboard!', 'success');
+            updateFoodLevelCircle(75);
+        });
+    </script>
+</body>
+</html>

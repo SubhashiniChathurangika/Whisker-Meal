@@ -1,0 +1,711 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WhiskerMeal - Profile</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: white;
+            font-family: Arial, sans-serif;
+            color: #341536;
+        }
+
+        /* Navigation */
+        .navbar {
+            background-color: #341536;
+            padding: 10px 0;
+        }
+
+        .navbar-brand {
+            color: white !important;
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .back-btn {
+            color: white;
+            text-decoration: none;
+            font-size: 18px;
+            margin-right: 20px;
+        }
+
+        .back-btn:hover {
+            color: #ADEBB3;
+            text-decoration: none;
+        }
+
+        /* Profile Container */
+        .profile-container {
+            max-width: 1000px;
+            margin: 30px auto;
+            padding: 20px;
+        }
+
+        .page-header {
+            background-color: #341536;
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .card {
+            background: white;
+            border: 2px solid #ADEBB3;
+            border-radius: 10px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 3px 10px rgba(52, 21, 54, 0.1);
+        }
+
+        .card-header {
+            background-color: #341536;
+            color: white;
+            padding: 15px;
+            margin: -25px -25px 25px -25px;
+            border-radius: 8px 8px 0 0;
+            font-size: 18px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* Photo Section */
+        .photo-section {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .profile-photo {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            border: 4px solid #ADEBB3;
+            background-color: #f8f9fa;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 60px;
+            color: #341536;
+            margin: 0 auto 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .profile-photo:hover {
+            border-color: #341536;
+            background-color: #ADEBB3;
+        }
+
+        .change-photo-btn {
+            background-color: #ADEBB3;
+            color: #341536;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-weight: bold;
+            cursor: pointer;
+            margin: 5px;
+        }
+
+        .change-photo-btn:hover {
+            background-color: #341536;
+            color: white;
+        }
+
+        .remove-photo-btn {
+            background-color: #dc3545;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-weight: bold;
+            cursor: pointer;
+            margin: 5px;
+        }
+
+        .remove-photo-btn:hover {
+            background-color: #c82333;
+        }
+
+        /* Form Styling */
+        .form-label {
+            color: #341536;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .form-control, .form-select {
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            padding: 12px 15px;
+            font-size: 16px;
+            margin-bottom: 15px;
+        }
+
+        .form-control:focus, .form-select:focus {
+            border-color: #ADEBB3;
+            box-shadow: 0 0 0 0.2rem rgba(173, 235, 179, 0.25);
+        }
+
+        .form-control[readonly] {
+            background-color: #f8f9fa;
+            border-color: #dee2e6;
+        }
+
+        /* Buttons */
+        .btn-primary {
+            background-color: #341536;
+            border-color: #341536;
+            color: white;
+            padding: 12px 25px;
+            border-radius: 25px;
+            font-weight: bold;
+        }
+
+        .btn-primary:hover {
+            background-color: #4a1f3f;
+            border-color: #4a1f3f;
+        }
+
+        .btn-secondary {
+            background-color: #ADEBB3;
+            border-color: #ADEBB3;
+            color: #341536;
+            padding: 12px 25px;
+            border-radius: 25px;
+            font-weight: bold;
+        }
+
+        .btn-secondary:hover {
+            background-color: #8cc49c;
+            border-color: #8cc49c;
+            color: #341536;
+        }
+
+        .btn-danger {
+            background-color: #dc3545;
+            border-color: #dc3545;
+            color: white;
+            padding: 12px 25px;
+            border-radius: 25px;
+            font-weight: bold;
+        }
+
+        .btn-danger:hover {
+            background-color: #c82333;
+            border-color: #c82333;
+        }
+
+        /* Pet Stats */
+        .pet-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .stat-box {
+            background-color: #ADEBB3;
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+            color: #341536;
+        }
+
+        .stat-number {
+            font-size: 24px;
+            font-weight: bold;
+            display: block;
+        }
+
+        .stat-label {
+            font-size: 14px;
+            margin-top: 5px;
+        }
+
+        /* Account Actions */
+        .account-actions {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        .edit-mode {
+            background-color: #fff3cd;
+            border: 2px solid #ffc107;
+        }
+
+        .success-message {
+            background-color: #d1eddd;
+            color: #155724;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border: 1px solid #c3e6cb;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .profile-container {
+                padding: 10px;
+            }
+            
+            .card {
+                padding: 15px;
+            }
+            
+            .card-header {
+                margin: -15px -15px 15px -15px;
+                padding: 12px;
+            }
+            
+            .profile-photo {
+                width: 120px;
+                height: 120px;
+                font-size: 50px;
+            }
+            
+            .account-actions {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container-fluid">
+            <div class="d-flex align-items-center">
+                <a href="homepage.html" class="back-btn">
+                    <i class="fas fa-arrow-left"></i> Back to Dashboard
+                </a>
+                <a class="navbar-brand">🐾 WhiskerMeal - Profile</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Profile Container -->
+    <div class="profile-container">
+        <!-- Page Header -->
+        <div class="page-header">
+            <h1>My Profile</h1>
+            <p>Manage your account and pet information</p>
+        </div>
+
+        <!-- Success Message -->
+        <div id="successMessage" class="success-message" style="display: none;">
+            <i class="fas fa-check-circle"></i> Profile updated successfully!
+        </div>
+
+        <!-- Pet Information Card -->
+        <div class="card" id="petCard">
+            <div class="card-header">
+                <i class="fas fa-paw"></i>
+                Pet Information
+            </div>
+
+            <!-- Pet Photo Section -->
+            <div class="photo-section">
+                <div class="profile-photo" id="petPhoto">🐕</div>
+                <input type="file" id="photoInput" accept="image/*" style="display: none;">
+                <br>
+                <button class="change-photo-btn" onclick="document.getElementById('photoInput').click()">
+                    Change Photo
+                </button>
+                <button class="remove-photo-btn" onclick="removePhoto()">
+                    Remove Photo
+                </button>
+            </div>
+
+            <!-- Pet Form -->
+            <form id="petForm">
+                <div class="row">
+                    <div class="col-md-6">
+                        <label for="petName" class="form-label">Pet Name</label>
+                        <input type="text" class="form-control" id="petName" value="Buddy" readonly>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="petType" class="form-label">Pet Type</label>
+                        <select class="form-select" id="petType" disabled>
+                            <option value="Dog" selected>Dog</option>
+                            <option value="Cat">Cat</option>
+                            <option value="Both">Both</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-4">
+                        <label for="petAge" class="form-label">Age (years)</label>
+                        <input type="number" class="form-control" id="petAge" value="3.5" min="0" max="30" step="0.1" readonly>
+                    </div>
+                    <div class="col-md-4">
+                        <label for="petWeight" class="form-label">Weight (kg)</label>
+                        <input type="number" class="form-control" id="petWeight" value="25.5" min="0.1" max="200" step="0.1" readonly>
+                    </div>
+                    <div class="col-md-4">
+                        <label for="petBreed" class="form-label">Breed</label>
+                        <input type="text" class="form-control" id="petBreed" value="Golden Retriever" readonly>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <label for="petColor" class="form-label">Color</label>
+                        <input type="text" class="form-control" id="petColor" value="Golden" readonly>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="petGender" class="form-label">Gender</label>
+                        <select class="form-select" id="petGender" disabled>
+                            <option value="Male" selected>Male</option>
+                            <option value="Female">Female</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Pet Statistics -->
+                <div class="pet-stats">
+                    <div class="stat-box">
+                        <span class="stat-number">847</span>
+                        <div class="stat-label">Total Meals</div>
+                    </div>
+                    <div class="stat-box">
+                        <span class="stat-number">127kg</span>
+                        <div class="stat-label">Food Consumed</div>
+                    </div>
+                    <div class="stat-box">
+                        <span class="stat-number">98%</span>
+                        <div class="stat-label">Health Score</div>
+                    </div>
+                    <div class="stat-box">
+                        <span class="stat-number">156</span>
+                        <div class="stat-label">Days Active</div>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <!-- User Information Card -->
+        <div class="card" id="userCard">
+            <div class="card-header">
+                <i class="fas fa-user"></i>
+                User Information
+            </div>
+
+            <form id="userForm">
+                <div class="row">
+                    <div class="col-md-6">
+                        <label for="userName" class="form-label">Full Name</label>
+                        <input type="text" class="form-control" id="userName" value="John Smith" readonly>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="userEmail" class="form-label">Email Address</label>
+                        <input type="email" class="form-control" id="userEmail" value="john.smith@email.com" readonly>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <label for="userPhone" class="form-label">Phone Number</label>
+                        <input type="tel" class="form-control" id="userPhone" value="+1 234 567 8900" readonly>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="userLocation" class="form-label">Location</label>
+                        <input type="text" class="form-control" id="userLocation" value="New York, USA" readonly>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-12">
+                        <label for="joinDate" class="form-label">Member Since</label>
+                        <input type="text" class="form-control" id="joinDate" value="January 15, 2024" readonly>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <!-- Machine Information Card -->
+        <div class="card">
+            <div class="card-header">
+                <i class="fas fa-microchip"></i>
+                Feeding Machine Information
+            </div>
+
+            <div class="row">
+                <div class="col-md-6">
+                    <label class="form-label">Machine ID</label>
+                    <input type="text" class="form-control" value="WM-2024-001234" readonly>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Status</label>
+                    <input type="text" class="form-control" value="Online - Connected" readonly style="color: #28a745; font-weight: bold;">
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6">
+                    <label class="form-label">Firmware Version</label>
+                    <input type="text" class="form-control" value="v2.1.5" readonly>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Last Update</label>
+                    <input type="text" class="form-control" value="March 10, 2024" readonly>
+                </div>
+            </div>
+        </div>
+
+        <!-- Account Actions -->
+        <div class="account-actions">
+            <button type="button" class="btn btn-secondary" id="editBtn" onclick="toggleEditMode()">
+                <i class="fas fa-edit"></i> Edit Profile
+            </button>
+            <button type="button" class="btn btn-primary" id="saveBtn" onclick="saveProfile()" style="display: none;">
+                <i class="fas fa-save"></i> Save Changes
+            </button>
+            <button type="button" class="btn btn-secondary" id="cancelBtn" onclick="cancelEdit()" style="display: none;">
+                <i class="fas fa-times"></i> Cancel
+            </button>
+            <button type="button" class="btn btn-primary" onclick="changePassword()">
+                <i class="fas fa-key"></i> Change Password
+            </button>
+            <button type="button" class="btn btn-danger" onclick="deleteAccount()">
+                <i class="fas fa-trash"></i> Delete Account
+            </button>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        let isEditMode = false;
+        let originalData = {};
+
+        // Photo Upload
+        document.getElementById('photoInput').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            const photoDiv = document.getElementById('petPhoto');
+            
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    photoDiv.innerHTML = `<img src="${e.target.result}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">`;
+                };
+                reader.readAsDataURL(file);
+                showNotification('Photo updated! Don\'t forget to save changes.', 'info');
+            }
+        });
+
+        // Remove Photo
+        function removePhoto() {
+            document.getElementById('petPhoto').innerHTML = '🐕';
+            showNotification('Photo removed! Don\'t forget to save changes.', 'info');
+        }
+
+        // Toggle Edit Mode
+        function toggleEditMode() {
+            isEditMode = !isEditMode;
+            
+            if (isEditMode) {
+                // Save original data
+                originalData = {
+                    petName: document.getElementById('petName').value,
+                    petType: document.getElementById('petType').value,
+                    petAge: document.getElementById('petAge').value,
+                    petWeight: document.getElementById('petWeight').value,
+                    petBreed: document.getElementById('petBreed').value,
+                    petColor: document.getElementById('petColor').value,
+                    petGender: document.getElementById('petGender').value,
+                    userName: document.getElementById('userName').value,
+                    userEmail: document.getElementById('userEmail').value,
+                    userPhone: document.getElementById('userPhone').value,
+                    userLocation: document.getElementById('userLocation').value
+                };
+                
+                // Enable editing
+                document.querySelectorAll('#petForm input, #petForm select').forEach(element => {
+                    element.removeAttribute('readonly');
+                    element.removeAttribute('disabled');
+                });
+                
+                document.querySelectorAll('#userForm input').forEach(element => {
+                    if (element.id !== 'joinDate') {
+                        element.removeAttribute('readonly');
+                    }
+                });
+                
+                // Update UI
+                document.getElementById('petCard').classList.add('edit-mode');
+                document.getElementById('userCard').classList.add('edit-mode');
+                document.getElementById('editBtn').style.display = 'none';
+                document.getElementById('saveBtn').style.display = 'inline-block';
+                document.getElementById('cancelBtn').style.display = 'inline-block';
+                
+                showNotification('Edit mode enabled. Make your changes and click Save.', 'info');
+            }
+        }
+
+        // Save Profile
+        function saveProfile() {
+            // Validation
+            const petName = document.getElementById('petName').value.trim();
+            const userName = document.getElementById('userName').value.trim();
+            const userEmail = document.getElementById('userEmail').value.trim();
+            
+            if (!petName || !userName || !userEmail) {
+                showNotification('Please fill in all required fields.', 'error');
+                return;
+            }
+            
+            // Email validation
+            const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailPattern.test(userEmail)) {
+                showNotification('Please enter a valid email address.', 'error');
+                return;
+            }
+            
+            // Simulate save process
+            const saveBtn = document.getElementById('saveBtn');
+            saveBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving...';
+            saveBtn.disabled = true;
+            
+            setTimeout(() => {
+                // Exit edit mode
+                exitEditMode();
+                
+                // Show success message
+                document.getElementById('successMessage').style.display = 'block';
+                showNotification('Profile updated successfully!', 'success');
+                
+                // Hide success message after 5 seconds
+                setTimeout(() => {
+                    document.getElementById('successMessage').style.display = 'none';
+                }, 5000);
+                
+                // Reset save button
+                saveBtn.innerHTML = '<i class="fas fa-save"></i> Save Changes';
+                saveBtn.disabled = false;
+            }, 1500);
+        }
+
+        // Cancel Edit
+        function cancelEdit() {
+            // Restore original data
+            Object.keys(originalData).forEach(key => {
+                const element = document.getElementById(key);
+                if (element) {
+                    element.value = originalData[key];
+                }
+            });
+            
+            exitEditMode();
+            showNotification('Changes cancelled.', 'info');
+        }
+
+        // Exit Edit Mode
+        function exitEditMode() {
+            isEditMode = false;
+            
+            // Disable editing
+            document.querySelectorAll('#petForm input, #petForm select').forEach(element => {
+                element.setAttribute('readonly', 'readonly');
+                if (element.tagName === 'SELECT') {
+                    element.setAttribute('disabled', 'disabled');
+                }
+            });
+            
+            document.querySelectorAll('#userForm input').forEach(element => {
+                element.setAttribute('readonly', 'readonly');
+            });
+            
+            // Update UI
+            document.getElementById('petCard').classList.remove('edit-mode');
+            document.getElementById('userCard').classList.remove('edit-mode');
+            document.getElementById('editBtn').style.display = 'inline-block';
+            document.getElementById('saveBtn').style.display = 'none';
+            document.getElementById('cancelBtn').style.display = 'none';
+        }
+
+        // Change Password
+        function changePassword() {
+            const currentPassword = prompt('Enter your current password:');
+            if (currentPassword) {
+                const newPassword = prompt('Enter your new password (min 6 characters):');
+                if (newPassword && newPassword.length >= 6) {
+                    const confirmPassword = prompt('Confirm your new password:');
+                    if (confirmPassword === newPassword) {
+                        showNotification('Password changed successfully!', 'success');
+                    } else {
+                        showNotification('Passwords do not match!', 'error');
+                    }
+                } else {
+                    showNotification('Password must be at least 6 characters long!', 'error');
+                }
+            }
+        }
+
+        // Delete Account
+        function deleteAccount() {
+            const confirmation = confirm('Are you sure you want to delete your account? This action cannot be undone.');
+            if (confirmation) {
+                const password = prompt('Enter your password to confirm account deletion:');
+                if (password) {
+                    showNotification('Account deletion request submitted. You will receive a confirmation email.', 'info');
+                }
+            }
+        }
+
+        // Notification System
+        function showNotification(message, type = 'info') {
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: ${type === 'success' ? '#28a745' : type === 'error' ? '#dc3545' : '#341536'};
+                color: white;
+                padding: 15px 20px;
+                border-radius: 8px;
+                z-index: 10000;
+                font-weight: bold;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+                max-width: 300px;
+            `;
+            notification.textContent = message;
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.remove();
+            }, 4000);
+        }
+
+        // Auto-capitalize names
+        document.getElementById('petName').addEventListener('input', function() {
+            this.value = this.value.replace(/\b\w/g, l => l.toUpperCase());
+        });
+        
+        document.getElementById('petBreed').addEventListener('input', function() {
+            this.value = this.value.replace(/\b\w/g, l => l.toUpperCase());
+        });
+
+        document.getElementById('userName').addEventListener('input', function() {
+            this.value = this.value.replace(/\b\w/g, l => l.toUpperCase());
+        });
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            showNotification('Profile loaded successfully!', 'success');
+        });
+    </script>
+</body>
+</html>

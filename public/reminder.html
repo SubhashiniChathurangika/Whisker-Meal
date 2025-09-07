@@ -1,0 +1,724 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WhiskerMeal - Set Reminders</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: white;
+            font-family: Arial, sans-serif;
+            color: #341536;
+        }
+
+        /* Navigation */
+        .navbar {
+            background-color: #341536;
+            padding: 10px 0;
+        }
+
+        .navbar-brand {
+            color: white !important;
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .back-btn {
+            color: white;
+            text-decoration: none;
+            font-size: 18px;
+            margin-right: 20px;
+        }
+
+        .back-btn:hover {
+            color: #ADEBB3;
+            text-decoration: none;
+        }
+
+        /* Reminder Container */
+        .reminder-container {
+            max-width: 1200px;
+            margin: 30px auto;
+            padding: 20px;
+        }
+
+        .page-header {
+            background-color: #341536;
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .card {
+            background: white;
+            border: 2px solid #ADEBB3;
+            border-radius: 10px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 3px 10px rgba(52, 21, 54, 0.1);
+        }
+
+        .card-header {
+            background-color: #341536;
+            color: white;
+            padding: 15px;
+            margin: -25px -25px 25px -25px;
+            border-radius: 8px 8px 0 0;
+            font-size: 18px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* Form Styling */
+        .form-label {
+            color: #341536;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .form-control, .form-select {
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            padding: 12px 15px;
+            font-size: 16px;
+            margin-bottom: 15px;
+        }
+
+        .form-control:focus, .form-select:focus {
+            border-color: #ADEBB3;
+            box-shadow: 0 0 0 0.2rem rgba(173, 235, 179, 0.25);
+        }
+
+        /* Buttons */
+        .btn-primary {
+            background-color: #341536;
+            border-color: #341536;
+            color: white;
+            padding: 12px 25px;
+            border-radius: 25px;
+            font-weight: bold;
+        }
+
+        .btn-primary:hover {
+            background-color: #4a1f3f;
+            border-color: #4a1f3f;
+        }
+
+        .btn-success {
+            background-color: #ADEBB3;
+            border-color: #ADEBB3;
+            color: #341536;
+            padding: 12px 25px;
+            border-radius: 25px;
+            font-weight: bold;
+        }
+
+        .btn-success:hover {
+            background-color: #8cc49c;
+            border-color: #8cc49c;
+            color: #341536;
+        }
+
+        .btn-danger {
+            background-color: #dc3545;
+            border-color: #dc3545;
+            color: white;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-weight: bold;
+        }
+
+        .btn-danger:hover {
+            background-color: #c82333;
+            border-color: #c82333;
+        }
+
+        .btn-warning {
+            background-color: #ffc107;
+            border-color: #ffc107;
+            color: #212529;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-weight: bold;
+        }
+
+        .btn-warning:hover {
+            background-color: #e0a800;
+            border-color: #e0a800;
+        }
+
+        /* Reminder Items */
+        .reminder-item {
+            background-color: #f8f9fa;
+            border: 2px solid #ADEBB3;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 15px;
+            position: relative;
+        }
+
+        .reminder-urgent {
+            border-color: #dc3545;
+            background-color: #fff5f5;
+        }
+
+        .reminder-upcoming {
+            border-color: #ffc107;
+            background-color: #fffbf0;
+        }
+
+        .reminder-completed {
+            border-color: #28a745;
+            background-color: #f0fff4;
+            opacity: 0.8;
+        }
+
+        .reminder-header {
+            display: flex;
+            justify-content: between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .reminder-title {
+            font-size: 18px;
+            font-weight: bold;
+            color: #341536;
+        }
+
+        .reminder-type {
+            background-color: #341536;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 15px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .reminder-details {
+            margin: 10px 0;
+            color: #666;
+        }
+
+        .reminder-actions {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 15px;
+        }
+
+        .reminder-status {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .status-due {
+            background-color: #dc3545;
+            color: white;
+        }
+
+        .status-upcoming {
+            background-color: #ffc107;
+            color: #212529;
+        }
+
+        .status-completed {
+            background-color: #28a745;
+            color: white;
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: #6c757d;
+        }
+
+        .empty-state i {
+            font-size: 60px;
+            margin-bottom: 20px;
+            color: #ADEBB3;
+        }
+
+        /* Success Message */
+        .success-message {
+            background-color: #d1eddd;
+            color: #155724;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border: 1px solid #c3e6cb;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .reminder-container {
+                padding: 10px;
+            }
+            
+            .card {
+                padding: 15px;
+            }
+            
+            .card-header {
+                margin: -15px -15px 15px -15px;
+                padding: 12px;
+            }
+            
+            .reminder-actions {
+                flex-direction: column;
+            }
+            
+            .reminder-status {
+                position: static;
+                display: inline-block;
+                margin-top: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container-fluid">
+            <div class="d-flex align-items-center">
+                <a href="homepage.html" class="back-btn">
+                    <i class="fas fa-arrow-left"></i> Back to Dashboard
+                </a>
+                <a class="navbar-brand">🐾 WhiskerMeal - Set Reminders</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Reminder Container -->
+    <div class="reminder-container">
+        <!-- Page Header -->
+        <div class="page-header">
+            <h1>Pet Health Reminders</h1>
+            <p>Never miss important health appointments and medications for your pet</p>
+        </div>
+
+        <!-- Success Message -->
+        <div id="successMessage" class="success-message" style="display: none;">
+            <i class="fas fa-check-circle"></i> Reminder saved successfully!
+        </div>
+
+        <div class="row">
+            <!-- Add New Reminder -->
+            <div class="col-lg-5">
+                <div class="card">
+                    <div class="card-header">
+                        <i class="fas fa-plus"></i>
+                        Add New Reminder
+                    </div>
+
+                    <form id="reminderForm">
+                        <div class="mb-3">
+                            <label for="reminderTitle" class="form-label">Reminder Title</label>
+                            <input type="text" class="form-control" id="reminderTitle" placeholder="e.g., Annual Vaccination" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="reminderType" class="form-label">Reminder Type</label>
+                            <select class="form-select" id="reminderType" required>
+                                <option value="">Select Type</option>
+                                <option value="Vaccination">Vaccination</option>
+                                <option value="Medication">Medication</option>
+                                <option value="Vet Checkup">Vet Checkup</option>
+                                <option value="Grooming">Grooming</option>
+                                <option value="Dental Care">Dental Care</option>
+                                <option value="Parasite Prevention">Parasite Prevention</option>
+                                <option value="Other">Other</option>
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="reminderDate" class="form-label">Due Date</label>
+                            <input type="date" class="form-control" id="reminderDate" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="reminderTime" class="form-label">Time (Optional)</label>
+                            <input type="time" class="form-control" id="reminderTime">
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="reminderFrequency" class="form-label">Repeat Frequency</label>
+                            <select class="form-select" id="reminderFrequency">
+                                <option value="None">One-time only</option>
+                                <option value="Daily">Daily</option>
+                                <option value="Weekly">Weekly</option>
+                                <option value="Monthly">Monthly</option>
+                                <option value="Quarterly">Every 3 months</option>
+                                <option value="Semi-Annual">Every 6 months</option>
+                                <option value="Annual">Annually</option>
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="reminderNotes" class="form-label">Notes (Optional)</label>
+                            <textarea class="form-control" id="reminderNotes" rows="3" placeholder="Additional information, dosage, vet contact, etc."></textarea>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="notifyBefore" class="form-label">Notify Me Before</label>
+                            <select class="form-select" id="notifyBefore">
+                                <option value="0">On the day</option>
+                                <option value="1">1 day before</option>
+                                <option value="3">3 days before</option>
+                                <option value="7" selected>1 week before</option>
+                                <option value="14">2 weeks before</option>
+                            </select>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary w-100">
+                            <i class="fas fa-plus"></i> Add Reminder
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Current Reminders -->
+            <div class="col-lg-7">
+                <div class="card">
+                    <div class="card-header">
+                        <i class="fas fa-bell"></i>
+                        Current Reminders
+                        <span class="badge bg-light text-dark ms-2" id="reminderCount">3</span>
+                    </div>
+
+                    <div id="remindersList">
+                        <!-- Urgent Reminder -->
+                        <div class="reminder-item reminder-urgent">
+                            <div class="reminder-status status-due">Due Tomorrow</div>
+                            <div class="reminder-header">
+                                <div class="reminder-title">Rabies Vaccination</div>
+                                <div class="reminder-type">Vaccination</div>
+                            </div>
+                            <div class="reminder-details">
+                                <p><strong>Due:</strong> Tomorrow, March 15, 2024 at 10:00 AM</p>
+                                <p><strong>Vet:</strong> City Animal Hospital</p>
+                                <p><strong>Notes:</strong> Annual rabies vaccine required by law</p>
+                                <p><strong>Next Reminder:</strong> In 1 year</p>
+                            </div>
+                            <div class="reminder-actions">
+                                <button class="btn btn-success btn-sm" onclick="markCompleted(this)">
+                                    <i class="fas fa-check"></i> Mark Completed
+                                </button>
+                                <button class="btn btn-warning btn-sm" onclick="editReminder(this)">
+                                    <i class="fas fa-edit"></i> Edit
+                                </button>
+                                <button class="btn btn-danger btn-sm" onclick="deleteReminder(this)">
+                                    <i class="fas fa-trash"></i> Delete
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Upcoming Reminder -->
+                        <div class="reminder-item reminder-upcoming">
+                            <div class="reminder-status status-upcoming">In 5 Days</div>
+                            <div class="reminder-header">
+                                <div class="reminder-title">Heart Medication</div>
+                                <div class="reminder-type">Medication</div>
+                            </div>
+                            <div class="reminder-details">
+                                <p><strong>Due:</strong> March 20, 2024 at 8:00 PM</p>
+                                <p><strong>Dosage:</strong> 25mg daily</p>
+                                <p><strong>Notes:</strong> Give with food to avoid stomach upset</p>
+                                <p><strong>Repeat:</strong> Daily</p>
+                            </div>
+                            <div class="reminder-actions">
+                                <button class="btn btn-success btn-sm" onclick="markCompleted(this)">
+                                    <i class="fas fa-check"></i> Mark Completed
+                                </button>
+                                <button class="btn btn-warning btn-sm" onclick="editReminder(this)">
+                                    <i class="fas fa-edit"></i> Edit
+                                </button>
+                                <button class="btn btn-danger btn-sm" onclick="deleteReminder(this)">
+                                    <i class="fas fa-trash"></i> Delete
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Regular Reminder -->
+                        <div class="reminder-item">
+                            <div class="reminder-status status-upcoming">In 2 Weeks</div>
+                            <div class="reminder-header">
+                                <div class="reminder-title">Annual Vet Checkup</div>
+                                <div class="reminder-type">Vet Checkup</div>
+                            </div>
+                            <div class="reminder-details">
+                                <p><strong>Due:</strong> March 30, 2024 at 2:00 PM</p>
+                                <p><strong>Vet:</strong> Dr. Sarah Johnson - Pet Care Clinic</p>
+                                <p><strong>Notes:</strong> Comprehensive health exam, blood work, dental check</p>
+                                <p><strong>Repeat:</strong> Annually</p>
+                            </div>
+                            <div class="reminder-actions">
+                                <button class="btn btn-success btn-sm" onclick="markCompleted(this)">
+                                    <i class="fas fa-check"></i> Mark Completed
+                                </button>
+                                <button class="btn btn-warning btn-sm" onclick="editReminder(this)">
+                                    <i class="fas fa-edit"></i> Edit
+                                </button>
+                                <button class="btn btn-danger btn-sm" onclick="deleteReminder(this)">
+                                    <i class="fas fa-trash"></i> Delete
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Empty State (hidden by default) -->
+                    <div id="emptyState" class="empty-state" style="display: none;">
+                        <i class="fas fa-calendar-plus"></i>
+                        <h4>No reminders set</h4>
+                        <p>Add your first reminder to keep track of your pet's health schedule.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        // Set minimum date to today
+        document.getElementById('reminderDate').min = new Date().toISOString().split('T')[0];
+
+        // Form Submission
+        document.getElementById('reminderForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(this);
+            const reminderData = {
+                title: formData.get('reminderTitle') || document.getElementById('reminderTitle').value,
+                type: document.getElementById('reminderType').value,
+                date: document.getElementById('reminderDate').value,
+                time: document.getElementById('reminderTime').value,
+                frequency: document.getElementById('reminderFrequency').value,
+                notes: document.getElementById('reminderNotes').value,
+                notifyBefore: document.getElementById('notifyBefore').value
+            };
+
+            // Validation
+            if (!reminderData.title || !reminderData.type || !reminderData.date) {
+                showNotification('Please fill in all required fields.', 'error');
+                return;
+            }
+
+            // Check if date is not in the past
+            const selectedDate = new Date(reminderData.date);
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            
+            if (selectedDate < today) {
+                showNotification('Please select a future date.', 'error');
+                return;
+            }
+
+            // Add reminder
+            addReminder(reminderData);
+            
+            // Reset form
+            this.reset();
+            
+            // Show success message
+            document.getElementById('successMessage').style.display = 'block';
+            showNotification('Reminder added successfully!', 'success');
+            
+            // Hide success message after 5 seconds
+            setTimeout(() => {
+                document.getElementById('successMessage').style.display = 'none';
+            }, 5000);
+        });
+
+        // Add Reminder to List
+        function addReminder(data) {
+            const remindersList = document.getElementById('remindersList');
+            const emptyState = document.getElementById('emptyState');
+            
+            // Hide empty state
+            emptyState.style.display = 'none';
+            
+            // Calculate days until due
+            const dueDate = new Date(data.date);
+            const today = new Date();
+            const diffTime = dueDate - today;
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+            
+            let statusClass = '';
+            let statusText = '';
+            let itemClass = '';
+            
+            if (diffDays <= 1) {
+                statusClass = 'status-due';
+                statusText = diffDays === 0 ? 'Due Today' : 'Due Tomorrow';
+                itemClass = 'reminder-urgent';
+            } else if (diffDays <= 7) {
+                statusClass = 'status-upcoming';
+                statusText = `In ${diffDays} Days`;
+                itemClass = 'reminder-upcoming';
+            } else {
+                statusClass = 'status-upcoming';
+                statusText = diffDays <= 14 ? `In ${diffDays} Days` : `In ${Math.ceil(diffDays/7)} Weeks`;
+                itemClass = '';
+            }
+
+            const timeDisplay = data.time ? ` at ${formatTime(data.time)}` : '';
+            const frequencyDisplay = data.frequency !== 'None' ? data.frequency : 'One-time only';
+            
+            const reminderHTML = `
+                <div class="reminder-item ${itemClass}">
+                    <div class="reminder-status ${statusClass}">${statusText}</div>
+                    <div class="reminder-header">
+                        <div class="reminder-title">${data.title}</div>
+                        <div class="reminder-type">${data.type}</div>
+                    </div>
+                    <div class="reminder-details">
+                        <p><strong>Due:</strong> ${formatDate(data.date)}${timeDisplay}</p>
+                        ${data.notes ? `<p><strong>Notes:</strong> ${data.notes}</p>` : ''}
+                        <p><strong>Repeat:</strong> ${frequencyDisplay}</p>
+                        <p><strong>Notify:</strong> ${data.notifyBefore} day(s) before</p>
+                    </div>
+                    <div class="reminder-actions">
+                        <button class="btn btn-success btn-sm" onclick="markCompleted(this)">
+                            <i class="fas fa-check"></i> Mark Completed
+                        </button>
+                        <button class="btn btn-warning btn-sm" onclick="editReminder(this)">
+                            <i class="fas fa-edit"></i> Edit
+                        </button>
+                        <button class="btn btn-danger btn-sm" onclick="deleteReminder(this)">
+                            <i class="fas fa-trash"></i> Delete
+                        </button>
+                    </div>
+                </div>
+            `;
+            
+            remindersList.insertAdjacentHTML('afterbegin', reminderHTML);
+            updateReminderCount();
+        }
+
+        // Mark Reminder as Completed
+        function markCompleted(button) {
+            const reminderItem = button.closest('.reminder-item');
+            const title = reminderItem.querySelector('.reminder-title').textContent;
+            
+            if (confirm(`Mark "${title}" as completed?`)) {
+                reminderItem.classList.add('reminder-completed');
+                reminderItem.querySelector('.reminder-status').className = 'reminder-status status-completed';
+                reminderItem.querySelector('.reminder-status').textContent = 'Completed';
+                
+                // Disable action buttons
+                const actionButtons = reminderItem.querySelectorAll('.reminder-actions button');
+                actionButtons.forEach(btn => {
+                    btn.disabled = true;
+                    btn.style.opacity = '0.5';
+                });
+                
+                showNotification(`"${title}" marked as completed!`, 'success');
+                updateReminderCount();
+            }
+        }
+
+        // Edit Reminder
+        function editReminder(button) {
+            const reminderItem = button.closest('.reminder-item');
+            const title = reminderItem.querySelector('.reminder-title').textContent;
+            showNotification(`Edit functionality for "${title}" coming soon!`, 'info');
+        }
+
+        // Delete Reminder
+        function deleteReminder(button) {
+            const reminderItem = button.closest('.reminder-item');
+            const title = reminderItem.querySelector('.reminder-title').textContent;
+            
+            if (confirm(`Are you sure you want to delete "${title}"?`)) {
+                reminderItem.remove();
+                showNotification(`"${title}" deleted successfully!`, 'success');
+                updateReminderCount();
+                
+                // Show empty state if no reminders left
+                const remainingReminders = document.querySelectorAll('.reminder-item').length;
+                if (remainingReminders === 0) {
+                    document.getElementById('emptyState').style.display = 'block';
+                }
+            }
+        }
+
+        // Update Reminder Count
+        function updateReminderCount() {
+            const activeReminders = document.querySelectorAll('.reminder-item:not(.reminder-completed)').length;
+            document.getElementById('reminderCount').textContent = activeReminders;
+        }
+
+        // Format Date
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            return date.toLocaleDateString('en-US', { 
+                weekday: 'long', 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric' 
+            });
+        }
+
+        // Format Time
+        function formatTime(timeString) {
+            if (!timeString) return '';
+            const [hours, minutes] = timeString.split(':');
+            const hour = parseInt(hours);
+            const ampm = hour >= 12 ? 'PM' : 'AM';
+            const displayHour = hour % 12 || 12;
+            return `${displayHour}:${minutes} ${ampm}`;
+        }
+
+        // Notification System
+        function showNotification(message, type = 'info') {
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: ${type === 'success' ? '#28a745' : type === 'error' ? '#dc3545' : '#341536'};
+                color: white;
+                padding: 15px 20px;
+                border-radius: 8px;
+                z-index: 10000;
+                font-weight: bold;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+                max-width: 300px;
+            `;
+            notification.textContent = message;
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.remove();
+            }, 4000);
+        }
+
+        // Auto-capitalize reminder title
+        document.getElementById('reminderTitle').addEventListener('input', function() {
+            this.value = this.value.replace(/\b\w/g, l => l.toUpperCase());
+        });
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            updateReminderCount();
+            showNotification('Reminder page loaded successfully!', 'success');
+        });
+    </script>
+</body>
+</html>

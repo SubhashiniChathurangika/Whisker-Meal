@@ -1,0 +1,51 @@
+{
+  "hosting": {
+    "public": "public",
+    "ignore": [
+      "firebase.json",
+      "**/.*",
+      "**/node_modules/**"
+    ],
+    "rewrites": [
+      {
+        "source": "/login",
+        "destination": "/Login.html"
+      },
+      {
+        "source": "/signup",
+        "destination": "/Signup.html"
+      },
+      {
+        "source": "/homepage",
+        "destination": "/homepage.html"
+      },
+      {
+        "source":"/profile",
+        "destination":"/profile.html"
+      },
+      {
+        "source": "/reminder",
+        "destination": "/reminder.html"
+      },
+      {
+        "source": "/disease",
+        "destination": "/disease.html"
+      },
+      {
+        "source": "/community",
+        "destination": "/community.html"
+      },
+      {
+        "source": "/schedule",
+        "destination": "/schedule.html"
+      },
+      {
+        "source": "/about",
+        "destination": "/about.html"
+      }
+    ],
+    "errorPages": {
+      "notFound": "/404.html"
+    }
+  }
+}
