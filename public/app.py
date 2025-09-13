@@ -51,7 +51,7 @@ def get_Chat_response(text):
         # pretty print last ouput tokens from bot
         return tokenizer.decode(chat_history_ids[:, bot_input_ids.shape[-1]:][0], skip_special_tokens=True)
     
-@app.route('/predict', methods=['GET', 'POST'])
+@app.route('/prediction', methods=['GET', 'POST'])
 def predict_disease():
     try:
         if disease_model is None:

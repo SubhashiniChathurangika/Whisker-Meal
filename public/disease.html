@@ -658,6 +658,7 @@
         }
 
         // Analyze Symptoms
+        // Analyze Symptoms
         function analyzeSymptoms() {
             const petType = document.getElementById('petType').value;
             const petAge = document.getElementById('petAge').value;
@@ -673,31 +674,44 @@
                 return;
             }
 
-            // Show loading
+            // Show loading spinner
             document.getElementById('loadingSpinner').style.display = 'block';
             document.getElementById('analyzeBtn').disabled = true;
 
-            // Simulate AI analysis (replace with actual API call)
-            setTimeout(() => {
-                const prediction = simulatePrediction();
-                showPredictionResult(prediction);
-                
+            // Prepare data for backend
+            const data = {
+                appetite: selectedSymptoms.includes("loss_appetite") ? 1 : 0,
+                energy: selectedSymptoms.includes("lethargy") ? 1 : 0,
+                digestive: selectedSymptoms.includes("vomiting") || selectedSymptoms.includes("diarrhea") ? 1 : 0,
+                breathing: selectedSymptoms.includes("coughing") || selectedSymptoms.includes("difficulty_breathing") ? 1 : 0,
+                movement: selectedSymptoms.includes("lameness") ? 1 : 0,
+                temperature: selectedSymptoms.includes("fever") ? 1 : 0
+            };
+
+            // Send POST request to Flask backend
+            fetch("http://localhost:5000/predict", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(data)
+            })
+            .then(response => response.json())
+            .then(prediction => {
+                showPredictionResult({
+                    name: prediction.disease,
+                    confidence: prediction.confidence,
+                    severity: prediction.confidence > 80 ? "severe" : "moderate"
+                });
+            })
+            .catch(err => {
+                console.error(err);
+                showNotification('Error contacting prediction server', 'error');
+            })
+            .finally(() => {
                 document.getElementById('loadingSpinner').style.display = 'none';
                 document.getElementById('analyzeBtn').disabled = false;
-            }, 3000);
-        }
-
-        // Simulate Disease Prediction (replace with actual API)
-        function simulatePrediction() {
-            const diseases = [
-                { name: "Upper Respiratory Infection", confidence: 87, severity: "moderate" },
-                { name: "Gastroenteritis", confidence: 79, severity: "mild" },
-                { name: "Kennel Cough", confidence: 82, severity: "mild" },
-                { name: "Urinary Tract Infection", confidence: 75, severity: "moderate" },
-                { name: "Skin Allergies", confidence: 71, severity: "mild" }
-            ];
-            
-            return diseases[Math.floor(Math.random() * diseases.length)];
+            });
         }
 
         // Show Prediction Result

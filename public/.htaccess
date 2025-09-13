@@ -1,0 +1,9 @@
+RewriteEngine On
+
+# Redirect all requests to index.html (Single Page Application style)
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^(.*)$ /index.html [L]
+
+# Example: Redirect /login to /index.html (for SPA routing)
+RewriteRule ^login$ /index.html
